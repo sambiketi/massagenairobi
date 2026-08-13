@@ -1,0 +1,55 @@
+<nav class="fixed top-0 left-0 right-0 z-50 bg-dark-900/95 backdrop-blur-md border-b border-gold-500/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
+                    <i class="fas fa-spa text-dark-900 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-white tracking-tight">{{ business_name|default('Sanctuary') }}</h1>
+                    <p class="text-xs text-gold-400 tracking-wider">MASSAGE THERAPY</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#services" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Services</a>
+                <a href="#therapists" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Therapists</a>
+                <a href="#gallery" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Gallery</a>
+                <a href="#location" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Location</a>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('admin.dashboard') }}" class="text-gold-400 hover:text-gold-300 transition-colors duration-300 text-sm font-medium">
+                    <i class="fas fa-crown mr-1"></i>Dashboard
+                </a>
+                {% endif %}
+            </div>
+            
+            <!-- Book Now Button -->
+            <button onclick="openBookingModal()" 
+                    class="bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 px-6 py-2.5 rounded-full font-semibold text-sm hover:shadow-lg hover:shadow-gold-500/30 transition-all duration-300 transform hover:scale-105">
+                <i class="fas fa-calendar-check mr-2"></i>Book Now
+            </button>
+            
+            <!-- Mobile Menu Toggle -->
+            <button id="mobileMenuToggle" class="md:hidden text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-dark-800 border-t border-gold-500/10">
+        <div class="px-4 py-6 space-y-4">
+            <a href="#services" class="block text-gray-300 hover:text-gold-400 transition-colors">Services</a>
+            <a href="#therapists" class="block text-gray-300 hover:text-gold-400 transition-colors">Therapists</a>
+            <a href="#gallery" class="block text-gray-300 hover:text-gold-400 transition-colors">Gallery</a>
+            <a href="#location" class="block text-gray-300 hover:text-gold-400 transition-colors">Location</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('admin.dashboard') }}" class="block text-gold-400 hover:text-gold-300 transition-colors">
+                <i class="fas fa-crown mr-1"></i>Dashboard
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</nav>

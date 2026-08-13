@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Sanctuary Massage{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-dark-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Admin Header -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-dark-900">Dashboard</h1>
+                    <p class="text-gray-600">Welcome back, {{ current_user.name|default('Admin') }}</p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{{ url_for('main.index') }}" target="_blank" 
+                       class="bg-dark-900 text-white px-4 py-2 rounded-lg hover:bg-dark-800 transition-colors">
+                        <i class="fas fa-external-link-alt mr-2"></i>View Site
+                    </a>
+                    <a href="{{ url_for('admin.logout') }}" 
+                       class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Bookings</p>
+                        <p class="text-3xl font-bold text-dark-900">{{ stats.total_bookings|default(0) }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-gold-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-calendar-check text-gold-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <span class="text-sm text-emerald-600">+{{ stats.new_bookings|default(0) }} this week</span>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Total Revenue</p>
+                        <p class="text-3xl font-bold text-dark-900">KES {{ "{:,.0f}".format(stats.total_revenue|default(0)) }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-money-bill-wave text-emerald-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <span class="text-sm text-emerald-600">+{{ stats.revenue_growth|default(0) }}% from last month</span>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Active Therapists</p>
+                        <p class="text-3xl font-bold text-dark-900">{{ stats.active_therapists|default(0) }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-md text-blue-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <span class="text-sm text-gray-500">{{ stats.total_therapists|default(0) }} total therapists</span>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm text-gray-500">Services Offered</p>
+                        <p class="text-3xl font-bold text-dark-900">{{ stats.total_services|default(0) }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-spa text-purple-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <span class="text-sm text-gray-500">Available for booking</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts and Recent Activity -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Chart -->
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-dark-900 mb-4">Booking Trends</h3>
+                <canvas id="bookingChart" height="250"></canvas>
+            </div>
+            
+            <!-- Recent Bookings -->
+            <div class="bg-white rounded-2xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-dark-900 mb-4">Recent Bookings</h3>
+                <div class="space-y-4">
+                    {% for booking in recent_bookings %}
+                    <div class="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div>
+                            <p class="font-medium text-dark-900">{{ booking.client_name }}</p>
+                            <p class="text-sm text-gray-500">{{ booking.appointment_date }} at {{ booking.appointment_time }}</p>
+                        </div>
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold
+                            {% if booking.status == 'Confirmed' %}bg-emerald-100 text-emerald-700
+                            {% elif booking.status == 'Pending' %}bg-yellow-100 text-yellow-700
+                            {% elif booking.status == 'Completed' %}bg-blue-100 text-blue-700
+                            {% else %}bg-red-100 text-red-700{% endif %}">
+                            {{ booking.status }}
+                        </span>
+                    </div>
+                    {% else %}
+                    <p class="text-gray-500 text-sm">No recent bookings</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart data hidden element - separates Jinja from JavaScript -->
+<div id="chartDataContainer" style="display:none;" 
+     data-chart="{{ chart_data|tojson|safe if chart_data is defined else [0,0,0,0,0,0,0] }}">
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get chart data from the hidden container
+    var container = document.getElementById('chartDataContainer');
+    var chartData = [0, 0, 0, 0, 0, 0, 0];
+    
+    try {
+        if (container && container.dataset.chart) {
+            var parsed = JSON.parse(container.dataset.chart);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                chartData = parsed;
+            }
+        }
+    } catch(e) {
+        console.warn('Failed to parse chart data, using defaults');
+    }
+    
+    // Ensure we have 7 values
+    while (chartData.length < 7) {
+        chartData.push(0);
+    }
+    chartData = chartData.slice(0, 7);
+    
+    // Create chart
+    var ctx = document.getElementById('bookingChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Bookings',
+                data: chartData,
+                borderColor: '#d4892e',
+                backgroundColor: 'rgba(212, 137, 46, 0.1)',
+                tension: 0.4,
+                fill: true,
+                borderWidth: 3,
+                pointBackgroundColor: '#d4892e',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Bookings: ' + context.parsed.y;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        font: {
+                            size: 11
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
