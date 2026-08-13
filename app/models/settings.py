@@ -1,10 +1,11 @@
-from app import db
+﻿from app import db
 from datetime import datetime
+import uuid
 
 class SiteSetting(db.Model):
     __tablename__ = 'site_settings'
     
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(db.uuid.uuid4()))
+    id = db.Column(db.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     key = db.Column(db.String(100), unique=True, nullable=False)
     value = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -12,7 +13,6 @@ class SiteSetting(db.Model):
     
     @classmethod
     def get_setting(cls, key, default=None):
-        """Get a setting by key"""
         setting = cls.query.filter_by(key=key).first()
         if setting:
             return setting.value
@@ -20,7 +20,6 @@ class SiteSetting(db.Model):
     
     @classmethod
     def set_setting(cls, key, value):
-        """Set a setting by key"""
         setting = cls.query.filter_by(key=key).first()
         if setting:
             setting.value = value
@@ -33,20 +32,18 @@ class SiteSetting(db.Model):
     
     @classmethod
     def get_settings(cls):
-        """Get all settings as dict"""
         settings = cls.query.all()
         return {s.key: s.value for s in settings}
     
     @classmethod
     def update_settings(cls, data):
-        """Update multiple settings"""
         for key, value in data.items():
             if value is not None:
                 cls.set_setting(key, value)
     
     def to_dict(self):
         return {
-            'id': self.id,
+            'id': str(self.id),
             'key': self.key,
             'value': self.value,
             'created_at': self.created_at.isoformat() if self.created_at else None,
