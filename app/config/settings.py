@@ -1,4 +1,4 @@
-import os
+﻿import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,7 +9,11 @@ class Config:
     # Flask
     SECRET_KEY = os.environ.get('SECRET_KEY')
     if not SECRET_KEY:
-        raise ValueError("SECRET_KEY must be set in environment variables")
+        if os.environ.get('FLASK_ENV') == 'production':
+            raise ValueError("SECRET_KEY must be set in environment variables for production")
+        else:
+            SECRET_KEY = 'dev-secret-key-do-not-use-in-production'
+            print("⚠️  WARNING: Using default SECRET_KEY for development")
     
     # Database - Using DATABASE_URL from Render session pooler
     DATABASE_URL = os.environ.get('DATABASE_URL')
