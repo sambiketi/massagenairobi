@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Manage Bookings - Admin{% endblock %}
 
@@ -175,12 +175,18 @@ let bookingModal = document.getElementById('bookingModal');
 function filterBookings() {
     const status = document.getElementById('statusFilter').value;
     const date = document.getElementById('dateFilter').value;
-    window.location.href = /admin/bookings?status=&date=;
+    let url = '/admin/bookings';
+    if (status || date) {
+        url += '?';
+        if (status) url += 'status=' + status + '&';
+        if (date) url += 'date=' + date;
+    }
+    window.location.href = url;
 }
 
 function editBooking(bookingId) {
     currentBookingId = bookingId;
-    fetch(/admin/api/booking/)
+    fetch('/admin/api/booking/' + bookingId)
         .then(res => res.json())
         .then(data => {
             document.getElementById('editBookingId').value = data.id;
@@ -189,6 +195,10 @@ function editBooking(bookingId) {
             document.getElementById('editNotes').value = data.notes || '';
             bookingModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+        })
+        .catch(error => {
+            console.error('Error fetching booking:', error);
+            alert('Error loading booking data. Please try again.');
         });
 }
 
@@ -199,7 +209,7 @@ function closeBookingModal() {
 
 function confirmBooking(bookingId) {
     if (confirm('Confirm this booking?')) {
-        fetch(/admin/api/booking//confirm, {
+        fetch('/admin/api/booking/' + bookingId + '/confirm', {
             method: 'PUT'
         })
         .then(res => res.json())
@@ -209,13 +219,17 @@ function confirmBooking(bookingId) {
             } else {
                 alert('Error: ' + result.error);
             }
+        })
+        .catch(error => {
+            console.error('Error confirming booking:', error);
+            alert('An error occurred. Please try again.');
         });
     }
 }
 
 function deleteBooking(bookingId) {
     if (confirm('Are you sure you want to delete this booking?')) {
-        fetch(/admin/api/booking/, {
+        fetch('/admin/api/booking/' + bookingId, {
             method: 'DELETE'
         })
         .then(res => res.json())
@@ -225,6 +239,10 @@ function deleteBooking(bookingId) {
             } else {
                 alert('Error: ' + result.error);
             }
+        })
+        .catch(error => {
+            console.error('Error deleting booking:', error);
+            alert('An error occurred. Please try again.');
         });
     }
 }
@@ -239,7 +257,7 @@ document.getElementById('bookingForm').addEventListener('submit', async function
     };
     
     try {
-        const response = await fetch(/admin/api/booking/, {
+        const response = await fetch('/admin/api/booking/' + currentBookingId, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -251,6 +269,7 @@ document.getElementById('bookingForm').addEventListener('submit', async function
             alert('Error: ' + result.error);
         }
     } catch (error) {
+        console.error('Error updating booking:', error);
         alert('An error occurred. Please try again.');
     }
 });
