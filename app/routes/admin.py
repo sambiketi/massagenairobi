@@ -14,7 +14,6 @@ admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    """Admin login page"""
     if current_user.is_authenticated:
         return redirect(url_for('admin.dashboard'))
     
@@ -52,8 +51,6 @@ def logout():
 @admin_bp.route('/')
 @login_required
 def dashboard():
-    """Admin dashboard"""
-    # Stats
     total_bookings = Booking.query.count()
     pending_bookings = Booking.query.filter_by(status='Pending').count()
     confirmed_bookings = Booking.query.filter_by(status='Confirmed').count()
@@ -70,7 +67,6 @@ def dashboard():
     total_therapists = Therapist.query.count()
     total_services = Service.query.filter_by(is_active=True).count()
     
-    # Chart data
     chart_data = []
     for i in range(6, -1, -1):
         date = datetime.utcnow() - timedelta(days=i)
@@ -105,7 +101,6 @@ def dashboard():
 @admin_bp.route('/therapists')
 @login_required
 def therapists():
-    """Therapists management page"""
     therapists = Therapist.query.order_by(Therapist.name).all()
     return render_template('admin/therapists.html', therapists=therapists)
 
@@ -413,6 +408,8 @@ def update_settings():
             'weekday_hours': request.form.get('weekday_hours'),
             'saturday_hours': request.form.get('saturday_hours'),
             'sunday_hours': request.form.get('sunday_hours'),
+            'business_tagline': request.form.get('business_tagline'),
+            'business_description': request.form.get('business_description'),
         }
         
         SiteSetting.update_settings(data)
@@ -453,4 +450,35 @@ def remove_hero_video():
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
 
+# ==================== LOGO ROUTES ====================
 
+@admin_bp.route('/api/settings/logo', methods=['POST'])
+@login_required
+def upload_logo():
+    try:
+        if 'logo' not in request.files:
+            return jsonify({'success': False, 'error': 'No logo provided'}), 400
+        
+        file = request.files['logo']
+        result = UploadService.upload_image(file, 'logo', resize=(200, 200))
+        
+        if not result['success']:
+            return jsonify({'success': False, 'error': result.get('error')}), 400
+        
+        SiteSetting.set_setting('logo_url', result['url'])
+        db.session.commit()
+        return jsonify({'success': True, 'url': result['url']})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@admin_bp.route('/api/settings/logo', methods=['DELETE'])
+@login_required
+def remove_logo():
+    try:
+        SiteSetting.set_setting('logo_url', None)
+        db.session.commit()
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500

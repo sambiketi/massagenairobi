@@ -1,0 +1,122 @@
+﻿{% extends "base.html" %}
+
+{% block title %}About Us - {{ business_name }}{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-dark-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-dark-900 mb-4">
+                About <span class="text-gold-600">Us</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Discover the story behind {{ business_name }}
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            <!-- Description -->
+            <div>
+                <h2 class="text-3xl font-bold text-dark-900 mb-6">
+                    Your Sanctuary of <span class="text-gold-600">Comfort</span>
+                </h2>
+                <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                    {{ business_description|default('Welcome to Sanctuary Massage, where relaxation meets expertise. Our team of professional therapists is dedicated to providing you with an unforgettable wellness experience.') }}
+                </p>
+                <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                    Located in the heart of Nairobi West, our serene environment offers the perfect escape from the hustle and bustle of daily life. We combine traditional techniques with modern therapies to ensure you leave feeling refreshed and rejuvenated.
+                </p>
+                
+                <div class="grid grid-cols-2 gap-4 mt-8">
+                    <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                        <i class="fas fa-user-md text-gold-500 text-3xl mb-2"></i>
+                        <p class="font-semibold text-dark-900">Expert Therapists</p>
+                        <p class="text-sm text-gray-500">Certified professionals</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                        <i class="fas fa-spa text-gold-500 text-3xl mb-2"></i>
+                        <p class="font-semibold text-dark-900">Premium Services</p>
+                        <p class="text-sm text-gray-500">Tailored to your needs</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                        <i class="fas fa-shield-alt text-gold-500 text-3xl mb-2"></i>
+                        <p class="font-semibold text-dark-900">Safe & Private</p>
+                        <p class="text-sm text-gray-500">Your comfort matters</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                        <i class="fas fa-star text-gold-500 text-3xl mb-2"></i>
+                        <p class="font-semibold text-dark-900">Top Rated</p>
+                        <p class="text-sm text-gray-500">5-Star experience</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact & Hours -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h3 class="text-xl font-bold text-dark-900 mb-4">
+                        <i class="fas fa-map-marker-alt text-gold-500 mr-2"></i>Location
+                    </h3>
+                    <p class="text-gray-600">{{ business_location|default('Stadeview Apartments, Kisauni Rd, Nairobi') }}</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h3 class="text-xl font-bold text-dark-900 mb-4">
+                        <i class="fas fa-phone text-gold-500 mr-2"></i>Contact
+                    </h3>
+                    <p class="text-gray-600"><strong>Phone:</strong> {{ business_phone|default('+254 700 000 000') }}</p>
+                    <p class="text-gray-600"><strong>Email:</strong> {{ business_email|default('info@sanctuarymassage.com') }}</p>
+                    <div class="mt-4 flex space-x-3">
+                        <a href="tel:{{ business_phone|default('+254700000000') }}" 
+                           class="bg-gold-500 hover:bg-gold-600 text-dark-900 px-4 py-2 rounded-full font-semibold transition-colors text-sm">
+                            <i class="fas fa-phone mr-2"></i>Call Now
+                        </a>
+                        <a href="https://wa.me/{{ whatsapp_number|default('254700000000') }}" target="_blank"
+                           class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-full font-semibold transition-colors text-sm">
+                            <i class="fab fa-whatsapp mr-2"></i>WhatsApp
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm p-6">
+                    <h3 class="text-xl font-bold text-dark-900 mb-4">
+                        <i class="fas fa-clock text-gold-500 mr-2"></i>Opening Hours
+                    </h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex justify-between">
+                            <span>Monday - Friday</span>
+                            <span>{{ weekday_hours|default('9:00 AM - 9:00 PM') }}</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>Saturday</span>
+                            <span>{{ saturday_hours|default('9:00 AM - 9:00 PM') }}</span>
+                        </li>
+                        <li class="flex justify-between">
+                            <span>Sunday</span>
+                            <span>{{ sunday_hours|default('10:00 AM - 6:00 PM') }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gallery Preview -->
+        {% if gallery_images %}
+        <div class="mt-16">
+            <h3 class="text-2xl font-bold text-dark-900 text-center mb-8">
+                Our <span class="text-gold-600">Sanctuary</span>
+            </h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {% for image in gallery_images[:4] %}
+                <div class="relative overflow-hidden rounded-2xl group aspect-square">
+                    <img src="{{ image.url }}" alt="{{ image.title }}" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                         loading="lazy">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

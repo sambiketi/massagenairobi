@@ -1,0 +1,71 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Our Therapists - {{ business_name }}{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-dark-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-dark-900 mb-4">
+                Meet Our <span class="text-gold-600">Therapists</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Professional, certified therapists dedicated to your wellness journey
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for therapist in therapists %}
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <div class="relative h-80">
+                    {% if therapist.photo_url %}
+                    <img src="{{ therapist.photo_url }}" alt="{{ therapist.name }}" 
+                         class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                         loading="lazy">
+                    {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gold-100 to-gold-300 flex items-center justify-center">
+                        <i class="fas fa-user-circle text-8xl text-gold-600/50"></i>
+                    </div>
+                    {% endif %}
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-dark-900 to-transparent p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-xl font-bold text-white">{{ therapist.name }}</h3>
+                                <p class="text-gold-400 text-sm">{{ therapist.specialty }}</p>
+                            </div>
+                            {% if therapist.is_available %}
+                            <span class="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold">
+                                <i class="fas fa-circle text-emerald-400 text-xs mr-1"></i>Available
+                            </span>
+                            {% else %}
+                            <span class="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-semibold">
+                                <i class="fas fa-circle text-red-400 text-xs mr-1"></i>Unavailable
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 text-sm mb-4">{{ therapist.bio|truncate(150) }}</p>
+                    {% if therapist.is_available %}
+                    <button onclick="openBookingModal(null, '{{ therapist.id }}')" 
+                            class="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 py-3 rounded-xl font-semibold transition-all duration-300 hover:shadow-lg hover:shadow-gold-500/30">
+                        <i class="fas fa-hand-holding-heart mr-2"></i>Book with {{ therapist.name }}
+                    </button>
+                    {% else %}
+                    <button disabled 
+                            class="w-full bg-gray-300 text-gray-500 py-3 rounded-xl font-semibold cursor-not-allowed">
+                        <i class="fas fa-clock mr-2"></i>Currently Unavailable
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-3 text-center py-12">
+                <p class="text-gray-500 text-lg">No therapists available at the moment.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,21 +1,29 @@
-<nav class="fixed top-0 left-0 right-0 z-50 bg-dark-900/95 backdrop-blur-md border-b border-gold-500/20">
+﻿<nav class="fixed top-0 left-0 right-0 z-50 bg-dark-900/95 backdrop-blur-md border-b border-gold-500/20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
             <!-- Logo -->
             <div class="flex items-center space-x-3">
+                {% if logo_url %}
+                <img src="{{ logo_url }}" alt="{{ business_name|default('Massage Therapists Nairobi West') }}" 
+                     class="w-12 h-12 rounded-full object-cover border-2 border-gold-400">
+                {% else %}
                 <div class="w-12 h-12 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
                     <i class="fas fa-spa text-dark-900 text-xl"></i>
                 </div>
+                {% endif %}
                 <div>
-                    <h1 class="text-xl font-bold text-white tracking-tight">{{ business_name|default('Sanctuary') }}</h1>
-                    <p class="text-xs text-gold-400 tracking-wider">MASSAGE THERAPY</p>
+                    <h1 class="text-xl font-bold text-white tracking-tight font-serif">
+                        {{ business_name|default('Massage Therapists Nairobi West') }}
+                    </h1>
+                    <p class="text-xs text-gold-400 tracking-wider font-serif italic">Massage Therapy</p>
                 </div>
             </div>
             
             <!-- Navigation Links -->
             <div class="hidden md:flex items-center space-x-8">
-                <a href="#services" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Services</a>
-                <a href="#therapists" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Therapists</a>
+                <a href="{{ url_for('main.index') }}" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Home</a>
+                <a href="{{ url_for('main.therapists_page') }}" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Therapists</a>
+                <a href="{{ url_for('main.about_page') }}" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">About</a>
                 <a href="#gallery" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Gallery</a>
                 <a href="#location" class="text-gray-300 hover:text-gold-400 transition-colors duration-300 text-sm font-medium">Location</a>
                 {% if current_user.is_authenticated %}
@@ -41,8 +49,9 @@
     <!-- Mobile Menu -->
     <div id="mobileMenu" class="hidden md:hidden bg-dark-800 border-t border-gold-500/10">
         <div class="px-4 py-6 space-y-4">
-            <a href="#services" class="block text-gray-300 hover:text-gold-400 transition-colors">Services</a>
-            <a href="#therapists" class="block text-gray-300 hover:text-gold-400 transition-colors">Therapists</a>
+            <a href="{{ url_for('main.index') }}" class="block text-gray-300 hover:text-gold-400 transition-colors">Home</a>
+            <a href="{{ url_for('main.therapists_page') }}" class="block text-gray-300 hover:text-gold-400 transition-colors">Therapists</a>
+            <a href="{{ url_for('main.about_page') }}" class="block text-gray-300 hover:text-gold-400 transition-colors">About</a>
             <a href="#gallery" class="block text-gray-300 hover:text-gold-400 transition-colors">Gallery</a>
             <a href="#location" class="block text-gray-300 hover:text-gold-400 transition-colors">Location</a>
             {% if current_user.is_authenticated %}
