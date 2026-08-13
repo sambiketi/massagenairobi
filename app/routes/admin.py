@@ -19,14 +19,14 @@ def login():
         return redirect(url_for('admin.dashboard'))
     
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+        username = request.form.get("username")
+        password = request.form.get("password")
         
-        if not email or not password:
+        if not username or not password:
             flash('Email and password are required', 'danger')
             return render_template('admin/login.html')
         
-        user = AdminUser.query.filter_by(email=email).first()
+        user = AdminUser.query.filter_by(username=username).first()
         
         if user and user.check_password(password) and user.is_active:
             login_user(user, remember=True)
@@ -36,7 +36,7 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('admin.dashboard'))
         else:
-            flash('Invalid email or password', 'danger')
+            flash("Invalid username or password", 'danger')
     
     return render_template('admin/login.html')
 
@@ -452,3 +452,4 @@ def remove_hero_video():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+
