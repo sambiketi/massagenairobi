@@ -23,7 +23,7 @@ def login():
         password = request.form.get("password")
         
         if not username or not password:
-            flash('Email and password are required', 'danger')
+            flash('Username and password are required', 'danger')
             return render_template('admin/login.html')
         
         user = AdminUser.query.filter_by(username=username).first()
@@ -452,4 +452,5 @@ def remove_hero_video():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+
 
