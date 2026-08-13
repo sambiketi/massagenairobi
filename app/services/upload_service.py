@@ -3,10 +3,9 @@ import uuid
 from datetime import datetime
 from flask import current_app
 from werkzeug.utils import secure_filename
-from PIL import Image
 
 class UploadService:
-    """File upload service with image resizing"""
+    """File upload service - NO Pillow needed"""
     
     @staticmethod
     def allowed_file(filename, allowed_extensions=None):
@@ -38,28 +37,10 @@ class UploadService:
             filepath = os.path.join(upload_folder, filename)
             file.save(filepath)
             
-            # Process image
-            img = Image.open(filepath)
-            
-            if resize and isinstance(resize, tuple) and len(resize) == 2:
-                img.thumbnail(resize, Image.Resampling.LANCZOS)
-                img.save(filepath, quality=85, optimize=True)
-            
-            thumbnail_url = None
-            if create_thumbnail:
-                thumb_filename = f"thumb_{filename}"
-                thumb_path = os.path.join(upload_folder, thumb_filename)
-                thumb = Image.open(filepath)
-                thumb.thumbnail((300, 300), Image.Resampling.LANCZOS)
-                thumb.save(thumb_path, quality=80, optimize=True)
-                thumbnail_url = f"/static/uploads/{folder}/{thumb_filename}"
-            
-            url = f"/static/uploads/{folder}/{filename}"
-            
             return {
                 'success': True,
-                'url': url,
-                'thumbnail_url': thumbnail_url,
+                'url': f"/static/uploads/{folder}/{filename}",
+                'thumbnail_url': None,
                 'filename': filename,
                 'path': filepath,
                 'size': os.path.getsize(filepath)
