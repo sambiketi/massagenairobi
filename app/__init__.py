@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_cors import CORS
-from flask_wtf import CSRFProtect
+#from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
 from datetime import datetime
 from werkzeug.middleware.proxy_fix import ProxyFix
@@ -15,7 +15,7 @@ load_dotenv()
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
-csrf = CSRFProtect()
+#csrf = CSRFProtect()
 cors = CORS()
 db.uuid = uuid
 
@@ -37,7 +37,7 @@ def create_app(config_name=None):
     login_manager.init_app(app)
     login_manager.login_view = 'admin.login'
     login_manager.login_message_category = 'info'
-    csrf.init_app(app)
+   # csrf.init_app(app)
     cors.init_app(app)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
     from app.routes.main import main_bp
