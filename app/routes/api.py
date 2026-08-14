@@ -307,8 +307,7 @@ def create_booking():
                             '%H:%M'
                         ),
 
-                    'mpesa_reference':
-                        booking.mpesa_reference,
+                
 
                     'service_title':
                         service.title
