@@ -1,278 +1,1018 @@
 ﻿{% extends "base.html" %}
 
-{% block title %}{{ business_name|default('Massage Therapists Nairobi West') }}{% endblock %}
+{% block title %}
+    {{ business_name|default('Massage Therapists Nairobi West') }}
+{% endblock %}
 
 {% block content %}
-<!-- Hero Section with Video -->
+
+<!-- =========================================================
+     HERO
+========================================================= -->
 <section class="relative min-h-screen flex items-center overflow-hidden">
+
     <div class="absolute inset-0 z-0">
+
         {% if hero_video %}
-        <video autoplay muted loop playsinline class="w-full h-full object-cover">
+        <video
+            autoplay
+            muted
+            loop
+            playsinline
+            class="w-full h-full object-cover">
             <source src="{{ hero_video.url }}" type="video/mp4">
         </video>
         {% else %}
         <div class="w-full h-full bg-gradient-to-br from-dark-900 to-dark-700"></div>
         {% endif %}
+
         <div class="absolute inset-0 bg-dark-900/70"></div>
     </div>
-    
+
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+
         <div class="max-w-3xl">
+
             <div class="inline-block bg-gold-500/20 backdrop-blur-sm px-6 py-2 rounded-full border border-gold-500/30 mb-6">
-                <span class="text-gold-300 text-sm font-medium tracking-wider">{{ business_location|default('Nairobi West, Kenya') }}</span>
+                <span class="text-gold-300 text-sm font-medium tracking-wider">
+                    {{ business_location|default('Nairobi West, Kenya') }}
+                </span>
             </div>
-            
+
             <h1 class="text-5xl md:text-7xl font-bold text-white leading-tight mb-4 font-serif">
                 {{ business_name|default('Massage Therapists') }}
-                <span class="block text-3xl md:text-4xl font-cursive text-gold-400 mt-2">Nairobi West</span>
+
+                <span class="block text-3xl md:text-4xl font-cursive text-gold-400 mt-2">
+                    Nairobi West
+                </span>
             </h1>
-            
-            <p class="text-xl text-gold-300 mb-8 font-cursive">{{ business_tagline|default('Premium Massage Therapy in Nairobi West') }}</p>
-            
-            <p class="text-lg text-gray-300 mb-8 leading-relaxed">
-                {{ business_description|default('Experience premium massage therapy in a serene environment. Professional therapists, private rooms, and holistic wellness.')|truncate(200) }}
+
+            <p class="text-xl text-gold-300 mb-8 font-cursive">
+                {{ business_tagline|default('Premium Massage Therapy in Nairobi West') }}
             </p>
-            
+
+            <p class="text-lg text-gray-300 mb-8 leading-relaxed">
+                {{ business_description|default(
+                    'Experience premium massage therapy in a serene environment. Professional therapists, private rooms, and holistic wellness.'
+                )|truncate(200) }}
+            </p>
+
             <div class="flex flex-wrap gap-4">
-                <button onclick="openBookingModal()" 
-                        class="bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 px-8 py-4 rounded-full font-semibold text-lg hover:shadow-2xl hover:shadow-gold-500/30 transition-all duration-300 transform hover:scale-105">
-                    <i class="fas fa-calendar-check mr-2"></i>Book Your Session
+
+                <button
+                    onclick="openBookingModal()"
+                    class="bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 px-8 py-4 rounded-full font-semibold text-lg hover:shadow-2xl hover:shadow-gold-500/30 transition-all duration-300 transform hover:scale-105">
+
+                    <i class="fas fa-calendar-check mr-2"></i>
+                    Book Your Session
                 </button>
-                <a href="{{ url_for('main.about_page') }}" 
-                   class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-300">
-                    <i class="fas fa-info-circle mr-2"></i>About Us
+
+                <a
+                    href="{{ url_for('main.about_page') }}"
+                    class="bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-300">
+
+                    <i class="fas fa-info-circle mr-2"></i>
+                    About Us
                 </a>
+
             </div>
-            
+
             <div class="mt-12 flex flex-wrap gap-8">
+
                 <div class="flex items-center space-x-3">
                     <i class="fas fa-user-md text-gold-400 text-2xl"></i>
                     <div>
-                        <p class="text-white font-semibold">Expert Therapists</p>
-                        <p class="text-gray-400 text-sm">Certified & Experienced</p>
+                        <p class="text-white font-semibold">
+                            Expert Therapists
+                        </p>
+                        <p class="text-gray-400 text-sm">
+                            Certified & Experienced
+                        </p>
                     </div>
                 </div>
+
                 <div class="flex items-center space-x-3">
                     <i class="fas fa-shield-alt text-gold-400 text-2xl"></i>
                     <div>
-                        <p class="text-white font-semibold">Safe & Private</p>
-                        <p class="text-gray-400 text-sm">Premium Facilities</p>
+                        <p class="text-white font-semibold">
+                            Safe & Private
+                        </p>
+                        <p class="text-gray-400 text-sm">
+                            Premium Facilities
+                        </p>
                     </div>
                 </div>
+
                 <div class="flex items-center space-x-3">
                     <i class="fas fa-star text-gold-400 text-2xl"></i>
                     <div>
-                        <p class="text-white font-semibold">Top Rated</p>
-                        <p class="text-gray-400 text-sm">5-Star Experience</p>
+                        <p class="text-white font-semibold">
+                            Premium Experience
+                        </p>
+                        <p class="text-gray-400 text-sm">
+                            Professional Service
+                        </p>
                     </div>
                 </div>
+
             </div>
+
         </div>
+
     </div>
 </section>
 
-<!-- Services Section -->
+
+<!-- =========================================================
+     SERVICES
+========================================================= -->
 <section id="services" class="py-24 bg-dark-50">
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         <div class="text-center mb-16">
+
             <h2 class="text-4xl md:text-5xl font-bold text-dark-900 mb-4 font-serif">
-                Our <span class="text-gold-600">Services</span>
+                Our
+                <span class="text-gold-600">Services</span>
             </h2>
+
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Choose from a range of professional massage therapies tailored to your needs
+                Explore our range of professional massage and wellness services.
             </p>
+
         </div>
-        
+
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
             {% for service in services %}
+
             <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+
                 {% if service.image_url %}
+
                 <div class="h-56 overflow-hidden">
-                    <img src="{{ service.image_url }}" alt="{{ service.title }}" 
-                         class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                         loading="lazy">
+
+                    <img
+                        src="{{ service.image_url }}"
+                        alt="{{ service.title }}"
+                        class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                        loading="lazy">
+
                 </div>
+
                 {% else %}
+
                 <div class="h-56 bg-gradient-to-br from-gold-100 to-gold-300 flex items-center justify-center">
+
                     <i class="fas fa-spa text-6xl text-gold-600"></i>
+
                 </div>
+
                 {% endif %}
+
+
                 <div class="p-6">
+
                     <div class="flex justify-between items-start mb-3">
-                        <h3 class="text-xl font-bold text-dark-900 font-serif">{{ service.title }}</h3>
-                        <span class="bg-gold-500 text-dark-900 px-3 py-1 rounded-full text-sm font-bold">
+
+                        <h3 class="text-xl font-bold text-dark-900 font-serif">
+                            {{ service.title }}
+                        </h3>
+
+                        <span class="bg-gold-500 text-dark-900 px-3 py-1 rounded-full text-sm font-bold whitespace-nowrap">
                             KES {{ "{:,.0f}".format(service.price_kes) }}
                         </span>
+
                     </div>
-                    <p class="text-gray-600 mb-4">{{ service.description }}</p>
+
+                    {% if service.description %}
+                    <p class="text-gray-600 mb-4">
+                        {{ service.description }}
+                    </p>
+                    {% endif %}
+
+
                     <div class="flex items-center justify-between">
+
                         <span class="text-sm text-gray-500">
-                            <i class="far fa-clock mr-1"></i>{{ service.duration_minutes }} min
+
+                            <i class="far fa-clock mr-1"></i>
+
+                            {{ service.duration_minutes }} min
+
                         </span>
-                        <button onclick="openBookingModal('{{ service.id }}')" 
-                                class="text-gold-600 hover:text-gold-700 font-semibold transition-colors">
-                            Book Now <i class="fas fa-arrow-right ml-1"></i>
+
+                        <button
+                            onclick="openBookingModal()"
+                            class="text-gold-600 hover:text-gold-700 font-semibold transition-colors">
+
+                            Book Now
+
+                            <i class="fas fa-arrow-right ml-1"></i>
+
                         </button>
+
                     </div>
+
                 </div>
+
             </div>
+
             {% else %}
+
             <div class="col-span-3 text-center py-12">
-                <p class="text-gray-500">No services available at the moment.</p>
+
+                <i class="fas fa-spa text-4xl text-gray-300 mb-4"></i>
+
+                <p class="text-gray-500">
+                    No services available at the moment.
+                </p>
+
             </div>
+
             {% endfor %}
+
         </div>
+
     </div>
+
 </section>
 
-<!-- Therapists Preview -->
+
+<!-- =========================================================
+     THERAPISTS
+========================================================= -->
 <section id="therapists" class="py-24 bg-dark-900">
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         <div class="text-center mb-16">
+
             <h2 class="text-4xl md:text-5xl font-bold text-white mb-4 font-serif">
-                Meet Our <span class="text-gold-400">Therapists</span>
+
+                Meet Our
+
+                <span class="text-gold-400">
+                    Therapists
+                </span>
+
             </h2>
+
             <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                Professional, certified therapists dedicated to your wellness journey
+                Experienced professionals dedicated to your comfort and wellness.
             </p>
-            <a href="{{ url_for('main.therapists_page') }}" class="inline-block mt-4 text-gold-400 hover:text-gold-300 font-semibold transition-colors">
-                View All Therapists <i class="fas fa-arrow-right ml-1"></i>
+
+            <a
+                href="{{ url_for('main.therapists_page') }}"
+                class="inline-block mt-4 text-gold-400 hover:text-gold-300 font-semibold transition-colors">
+
+                View All Therapists
+
+                <i class="fas fa-arrow-right ml-1"></i>
+
             </a>
+
         </div>
-        
+
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
             {% for therapist in therapists[:3] %}
+
             <div class="bg-dark-800 rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-gold-500/10 transition-all duration-300 transform hover:-translate-y-2">
+
                 <div class="relative">
+
                     {% if therapist.photo_url %}
+
                     <div class="h-80 overflow-hidden">
-                        <img src="{{ therapist.photo_url }}" alt="{{ therapist.name }}" 
-                             class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                             loading="lazy">
+
+                        <img
+                            src="{{ therapist.photo_url }}"
+                            alt="{{ therapist.name }}"
+                            class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                            loading="lazy">
+
                     </div>
+
                     {% else %}
+
                     <div class="h-80 bg-gradient-to-br from-dark-700 to-dark-900 flex items-center justify-center">
+
                         <i class="fas fa-user-circle text-8xl text-gold-400/30"></i>
+
                     </div>
+
                     {% endif %}
+
+
                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-dark-900 to-transparent p-6">
-                        <div class="flex items-center justify-between">
+
+                        <div class="flex items-center justify-between gap-4">
+
                             <div>
-                                <h3 class="text-xl font-bold text-white font-serif">{{ therapist.name }}</h3>
-                                <p class="text-gold-400 text-sm">{{ therapist.specialty }}</p>
+
+                                <h3 class="text-xl font-bold text-white font-serif">
+                                    {{ therapist.name }}
+                                </h3>
+
+                                {% if therapist.specialty %}
+                                <p class="text-gold-400 text-sm">
+                                    {{ therapist.specialty }}
+                                </p>
+                                {% endif %}
+
                             </div>
+
+
                             {% if therapist.is_available %}
-                            <span class="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold">
-                                <i class="fas fa-circle text-emerald-400 text-xs mr-1"></i>Available
+
+                            <span class="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">
+
+                                <i class="fas fa-circle text-emerald-400 text-xs mr-1"></i>
+
+                                Available
+
                             </span>
+
                             {% else %}
-                            <span class="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-semibold">
-                                <i class="fas fa-circle text-red-400 text-xs mr-1"></i>Unavailable
+
+                            <span class="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">
+
+                                <i class="fas fa-circle text-red-400 text-xs mr-1"></i>
+
+                                Unavailable
+
                             </span>
+
                             {% endif %}
+
                         </div>
+
                     </div>
+
                 </div>
+
+
                 <div class="p-6">
-                    <p class="text-gray-400 text-sm mb-4">{{ therapist.bio|truncate(100) }}</p>
-                    {% if therapist.is_available %}
-                    <button onclick="openBookingModal(null, '{{ therapist.id }}')" 
-                            class="w-full bg-gold-500 hover:bg-gold-600 text-dark-900 py-3 rounded-xl font-semibold transition-colors duration-300">
-                        <i class="fas fa-hand-holding-heart mr-2"></i>Book with {{ therapist.name }}
-                    </button>
+
+                    {% if therapist.bio %}
+
+                    <p class="text-gray-400 text-sm mb-4">
+                        {{ therapist.bio|truncate(120) }}
+                    </p>
+
                     {% endif %}
+
+
+                    {% if therapist.is_available %}
+
+                    <button
+                        onclick="openBookingModal()"
+                        class="w-full bg-gold-500 hover:bg-gold-600 text-dark-900 py-3 rounded-xl font-semibold transition-colors duration-300">
+
+                        <i class="fas fa-calendar-check mr-2"></i>
+
+                        Book Your Session
+
+                    </button>
+
+                    {% endif %}
+
                 </div>
+
             </div>
+
             {% else %}
+
             <div class="col-span-3 text-center py-12">
-                <p class="text-gray-400">No therapists available at the moment.</p>
+
+                <i class="fas fa-users text-4xl text-gray-700 mb-4"></i>
+
+                <p class="text-gray-400">
+                    No therapists available at the moment.
+                </p>
+
             </div>
+
             {% endfor %}
+
         </div>
+
     </div>
+
 </section>
 
-<!-- Gallery Section -->
+
+<!-- =========================================================
+     GALLERY
+========================================================= -->
 <section id="gallery" class="py-24 bg-dark-50">
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         <div class="text-center mb-16">
+
             <h2 class="text-4xl md:text-5xl font-bold text-dark-900 mb-4 font-serif">
-                Our <span class="text-gold-600">Sanctuary</span>
+
+                Our
+
+                <span class="text-gold-600">
+                    Sanctuary
+                </span>
+
             </h2>
+
             <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                Experience tranquility in our premium facilities
+                Take a glimpse into our peaceful environment.
             </p>
+
         </div>
-        
+
+
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
             {% for image in gallery_images %}
+
             <div class="relative overflow-hidden rounded-2xl group aspect-square">
-                <img src="{{ image.url }}" alt="{{ image.title }}" 
-                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                     loading="lazy">
+
+                <img
+                    src="{{ image.url }}"
+                    alt="{{ image.title|default('Massage facility') }}"
+                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    loading="lazy">
+
                 <div class="absolute inset-0 bg-dark-900/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <span class="text-white font-semibold text-center px-4">{{ image.title }}</span>
+
+                    {% if image.title %}
+
+                    <span class="text-white font-semibold text-center px-4">
+                        {{ image.title }}
+                    </span>
+
+                    {% endif %}
+
                 </div>
+
             </div>
+
             {% else %}
+
             <div class="col-span-4 text-center py-12">
-                <p class="text-gray-500">No gallery images available.</p>
+
+                <i class="fas fa-images text-4xl text-gray-300 mb-4"></i>
+
+                <p class="text-gray-500">
+                    No gallery images available.
+                </p>
+
             </div>
+
             {% endfor %}
+
         </div>
+
     </div>
+
 </section>
 
-<!-- Location Section -->
+
+<!-- =========================================================
+     LOCATION
+========================================================= -->
 <section id="location" class="py-24 bg-dark-900">
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+
             <div>
+
                 <h2 class="text-4xl font-bold text-white mb-6 font-serif">
-                    Find <span class="text-gold-400">Us</span>
+
+                    Find
+
+                    <span class="text-gold-400">
+                        Us
+                    </span>
+
                 </h2>
-                <div class="space-y-4 text-gray-300">
+
+
+                <div class="space-y-5 text-gray-300">
+
                     <p class="flex items-start space-x-3">
+
                         <i class="fas fa-map-marker-alt text-gold-400 text-xl mt-1"></i>
-                        <span>{{ business_location|default('Stadeview Apartments, Kisauni Rd, Nairobi') }}</span>
+
+                        <span>
+                            {{ business_location|default('Nairobi West, Nairobi, Kenya') }}
+                        </span>
+
                     </p>
+
+
                     <p class="flex items-start space-x-3">
+
                         <i class="fas fa-phone text-gold-400 text-xl mt-1"></i>
-                        <span>{{ business_phone|default('+254 700 000 000') }}</span>
+
+                        <span>
+                            {{ business_phone|default('+254 700 000 000') }}
+                        </span>
+
                     </p>
+
+
                     <p class="flex items-start space-x-3">
+
                         <i class="fas fa-envelope text-gold-400 text-xl mt-1"></i>
-                        <span>{{ business_email|default('info@sanctuarymassage.com') }}</span>
+
+                        <span>
+                            {{ business_email|default('info@sanctuarymassage.com') }}
+                        </span>
+
                     </p>
+
+
                     <p class="flex items-start space-x-3">
+
                         <i class="fas fa-clock text-gold-400 text-xl mt-1"></i>
-                        <span>Mon-Sat: 9:00 AM - 9:00 PM<br>Sunday: 10:00 AM - 6:00 PM</span>
+
+                        <span>
+                            {{ weekday_hours|default('Mon-Sat: 9:00 AM - 9:00 PM') }}
+                            <br>
+                            {{ sunday_hours|default('Sunday: 10:00 AM - 6:00 PM') }}
+                        </span>
+
                     </p>
+
                 </div>
-                
-                <div class="mt-8 flex space-x-4">
-                    <a href="tel:{{ business_phone|default('+254700000000') }}" 
-                       class="bg-gold-500 hover:bg-gold-600 text-dark-900 px-6 py-3 rounded-full font-semibold transition-colors">
-                        <i class="fas fa-phone mr-2"></i>Call Us
+
+
+                <div class="mt-8 flex flex-wrap gap-4">
+
+                    <a
+                        href="tel:{{ business_phone|default('+254700000000') }}"
+                        class="bg-gold-500 hover:bg-gold-600 text-dark-900 px-6 py-3 rounded-full font-semibold transition-colors">
+
+                        <i class="fas fa-phone mr-2"></i>
+
+                        Call Us
+
                     </a>
-                    <a href="https://wa.me/{{ whatsapp_number|default('254700000000') }}" target="_blank"
-                       class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full font-semibold transition-colors border border-white/20">
-                        <i class="fab fa-whatsapp mr-2"></i>WhatsApp
+
+
+                    <a
+                        href="https://wa.me/{{ whatsapp_number|default('254700000000') }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full font-semibold transition-colors border border-white/20">
+
+                        <i class="fab fa-whatsapp mr-2"></i>
+
+                        WhatsApp
+
                     </a>
+
                 </div>
+
             </div>
-            
+
+
             <div class="bg-dark-800 rounded-2xl p-6">
-                <div class="aspect-w-16 aspect-h-9 bg-dark-700 rounded-xl overflow-hidden" style="padding-bottom: 56.25%; position: relative;">
-                    <iframe 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8056!2d36.7806!3d-1.2864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1a6bf7445dc3%3A0x9b4f8f6a4c8f6a4c!2sNairobi%20West!5e0!3m2!1sen!2ske!4v1712345678" 
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
-                        allowfullscreen="" 
-                        loading="lazy">
+
+                <div
+                    class="bg-dark-700 rounded-xl overflow-hidden"
+                    style="padding-bottom:56.25%;position:relative;">
+
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8056!2d36.7806!3d-1.2864"
+                        style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+                        allowfullscreen
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </section>
+
+
+<!-- =========================================================
+     BOOKING MODAL
+========================================================= -->
+<div
+    id="bookingModal"
+    class="fixed inset-0 z-50 hidden">
+
+    <div
+        class="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        onclick="closeBookingModal()">
+    </div>
+
+
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+
+            <!-- Header -->
+            <div class="bg-dark-900 px-6 py-5 flex justify-between items-center">
+
+                <div>
+
+                    <h2 class="text-2xl font-bold text-white font-serif">
+                        Book Your Session
+                    </h2>
+
+                    <p class="text-gray-400 text-sm mt-1">
+                        Choose your preferred date and time
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    onclick="closeBookingModal()"
+                    class="text-gray-400 hover:text-white text-2xl">
+
+                    <i class="fas fa-times"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- Form -->
+            <form
+                id="bookingForm"
+                class="p-6 space-y-5">
+
+                <!-- Name -->
+                <div>
+
+                    <label
+                        for="bookingName"
+                        class="block text-sm font-semibold text-gray-700 mb-2">
+
+                        Full Name
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="bookingName"
+                        name="name"
+                        required
+                        maxlength="100"
+                        autocomplete="name"
+                        placeholder="Your full name"
+                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
+
+                </div>
+
+
+                <!-- Phone -->
+                <div>
+
+                    <label
+                        for="bookingPhone"
+                        class="block text-sm font-semibold text-gray-700 mb-2">
+
+                        Phone Number
+
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="bookingPhone"
+                        name="phone"
+                        required
+                        maxlength="20"
+                        autocomplete="tel"
+                        placeholder="07XX XXX XXX"
+                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
+
+                </div>
+
+
+                <!-- Email -->
+                <div>
+
+                    <label
+                        for="bookingEmail"
+                        class="block text-sm font-semibold text-gray-700 mb-2">
+
+                        Email
+                        <span class="text-gray-400 font-normal">
+                            (optional)
+                        </span>
+
+                    </label>
+
+                    <input
+                        type="email"
+                        id="bookingEmail"
+                        name="email"
+                        maxlength="100"
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
+
+                </div>
+
+
+                <!-- Date -->
+                <div>
+
+                    <label
+                        for="bookingDate"
+                        class="block text-sm font-semibold text-gray-700 mb-2">
+
+                        Preferred Date
+
+                    </label>
+
+                    <input
+                        type="date"
+                        id="bookingDate"
+                        name="date"
+                        required
+                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
+
+                </div>
+
+
+                <!-- Time -->
+                <div>
+
+                    <label
+                        for="bookingTime"
+                        class="block text-sm font-semibold text-gray-700 mb-2">
+
+                        Preferred Time
+
+                    </label>
+
+                    <input
+                        type="time"
+                        id="bookingTime"
+                        name="time"
+                        required
+                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
+
+                </div>
+
+
+                <!-- Error -->
+                <div
+                    id="bookingError"
+                    class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                </div>
+
+
+                <!-- Success -->
+                <div
+                    id="bookingSuccess"
+                    class="hidden bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">
+                </div>
+
+
+                <!-- Submit -->
+                <button
+                    type="submit"
+                    id="bookingSubmit"
+                    class="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 py-4 rounded-xl font-bold hover:shadow-lg hover:shadow-gold-500/20 transition-all">
+
+                    <i class="fas fa-calendar-check mr-2"></i>
+
+                    Submit Booking
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     BOOKING JAVASCRIPT
+========================================================= -->
+<script>
+
+const bookingModal = document.getElementById('bookingModal');
+const bookingForm = document.getElementById('bookingForm');
+const bookingError = document.getElementById('bookingError');
+const bookingSuccess = document.getElementById('bookingSuccess');
+const bookingSubmit = document.getElementById('bookingSubmit');
+
+
+// ---------------------------------------------------------
+// Open modal
+// ---------------------------------------------------------
+function openBookingModal() {
+
+    bookingModal.classList.remove('hidden');
+
+    document.body.style.overflow = 'hidden';
+
+    bookingError.classList.add('hidden');
+    bookingSuccess.classList.add('hidden');
+
+    const today = new Date().toISOString().split('T')[0];
+
+    document.getElementById('bookingDate').min = today;
+}
+
+
+// ---------------------------------------------------------
+// Close modal
+// ---------------------------------------------------------
+function closeBookingModal() {
+
+    bookingModal.classList.add('hidden');
+
+    document.body.style.overflow = '';
+
+}
+
+
+// ---------------------------------------------------------
+// Submit booking
+// ---------------------------------------------------------
+bookingForm.addEventListener('submit', async function(event) {
+
+    event.preventDefault();
+
+    bookingError.classList.add('hidden');
+    bookingSuccess.classList.add('hidden');
+
+
+    const data = {
+
+        name: document.getElementById('bookingName').value.trim(),
+
+        phone: document.getElementById('bookingPhone').value.trim(),
+
+        email: document.getElementById('bookingEmail').value.trim(),
+
+        date: document.getElementById('bookingDate').value,
+
+        time: document.getElementById('bookingTime').value
+
+    };
+
+
+    // Basic validation
+    if (
+        !data.name ||
+        !data.phone ||
+        !data.date ||
+        !data.time
+    ) {
+
+        bookingError.textContent =
+            'Please complete all required fields.';
+
+        bookingError.classList.remove('hidden');
+
+        return;
+
+    }
+
+
+    // Disable button
+    bookingSubmit.disabled = true;
+
+    bookingSubmit.innerHTML =
+        '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+
+
+    try {
+
+        const response = await fetch('/api/book', {
+
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'application/json'
+            },
+
+            body: JSON.stringify(data)
+
+        });
+
+
+        const result = await response.json();
+
+
+        if (!response.ok || !result.success) {
+
+            throw new Error(
+                result.error || 'Unable to create booking.'
+            );
+
+        }
+
+
+        // Success
+        bookingSuccess.innerHTML = `
+            <strong>Booking request submitted!</strong>
+            <br>
+            We have received your preferred date and time.
+        `;
+
+        bookingSuccess.classList.remove('hidden');
+
+
+        // Reset form
+        bookingForm.reset();
+
+
+        // WhatsApp confirmation
+        if (result.whatsapp_url) {
+
+            setTimeout(() => {
+
+                window.location.href = result.whatsapp_url;
+
+            }, 1200);
+
+        }
+
+
+    } catch (error) {
+
+        console.error('Booking error:', error);
+
+
+        bookingError.textContent =
+            error.message ||
+            'Something went wrong. Please try again.';
+
+        bookingError.classList.remove('hidden');
+
+
+    } finally {
+
+        bookingSubmit.disabled = false;
+
+        bookingSubmit.innerHTML =
+            '<i class="fas fa-calendar-check mr-2"></i>Submit Booking';
+
+    }
+
+});
+
+
+// ---------------------------------------------------------
+// Escape key closes modal
+// ---------------------------------------------------------
+document.addEventListener('keydown', function(event) {
+
+    if (
+        event.key === 'Escape' &&
+        !bookingModal.classList.contains('hidden')
+    ) {
+
+        closeBookingModal();
+
+    }
+
+});
+
+
+// ---------------------------------------------------------
+// Prevent past dates
+// ---------------------------------------------------------
+document.addEventListener('DOMContentLoaded', function() {
+
+    const dateInput =
+        document.getElementById('bookingDate');
+
+    if (dateInput) {
+
+        const today =
+            new Date().toISOString().split('T')[0];
+
+        dateInput.min = today;
+
+    }
+
+});
+
+</script>
+
 {% endblock %}
