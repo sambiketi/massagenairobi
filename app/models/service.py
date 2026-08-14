@@ -1,7 +1,6 @@
 from app import db
 from datetime import datetime
 import uuid
-from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 
 
@@ -14,12 +13,34 @@ class Service(db.Model):
         default=uuid.uuid4
     )
 
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text)
-    price_kes = db.Column(db.Integer, nullable=False)
-    duration_minutes = db.Column(db.Integer, nullable=False)
-    image_url = db.Column(db.String(500))
-    is_active = db.Column(db.Boolean, default=True)
+    title = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    description = db.Column(
+        db.Text
+    )
+
+    price_kes = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    duration_minutes = db.Column(
+        db.Integer,
+        nullable=False
+    )
+
+    image_url = db.Column(
+        db.String(500)
+    )
+
+    is_active = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
 
     created_at = db.Column(
         db.DateTime,
@@ -32,9 +53,10 @@ class Service(db.Model):
         onupdate=datetime.utcnow
     )
 
-    bookings = relationship(
+    # Booking relationship
+    bookings = db.relationship(
         'Booking',
-        backref='service',
+        back_populates='service',
         lazy=True
     )
 
@@ -50,6 +72,10 @@ class Service(db.Model):
             'created_at': (
                 self.created_at.isoformat()
                 if self.created_at else None
+            ),
+            'updated_at': (
+                self.updated_at.isoformat()
+                if self.updated_at else None
             )
         }
 

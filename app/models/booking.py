@@ -7,9 +7,9 @@ class Booking(db.Model):
     __tablename__ = 'bookings'
 
     id = db.Column(
-        db.String(36),
+        db.UUID(as_uuid=True),
         primary_key=True,
-        default=lambda: str(uuid.uuid4())
+        default=uuid.uuid4
     )
 
     # Customer
@@ -23,17 +23,24 @@ class Booking(db.Model):
         nullable=False
     )
 
+    client_email = db.Column(
+        db.String(100),
+        nullable=True
+    )
+
     # Service
     service_id = db.Column(
-        db.String(36),
-        db.ForeignKey('services.id', ondelete='SET NULL'),
+        db.UUID(as_uuid=True),
+        db.ForeignKey(
+            'services.id',
+            ondelete='SET NULL'
+        ),
         nullable=True
     )
 
     service = db.relationship(
         'Service',
-        backref='bookings',
-        lazy=True
+        back_populates='bookings'
     )
 
     # Appointment
@@ -47,11 +54,10 @@ class Booking(db.Model):
         nullable=False
     )
 
-    # Internal booking management
-    status = db.Column(
-        db.String(20),
-        nullable=False,
-        default='Pending'
+    # Payment
+    mpesa_reference = db.Column(
+        db.String(50),
+        nullable=True
     )
 
     amount = db.Column(
@@ -60,9 +66,11 @@ class Booking(db.Model):
         default=0
     )
 
-    mpesa_reference = db.Column(
-        db.String(50),
-        nullable=True
+    # Booking management
+    status = db.Column(
+        db.String(20),
+        nullable=False,
+        default='Pending'
     )
 
     notes = db.Column(
@@ -86,44 +94,43 @@ class Booking(db.Model):
 
     def to_dict(self):
         return {
-            'id': self.id,
+            'id': str(self.id) if self.id else None,
+
             'client_name': self.client_name,
             'client_phone': self.client_phone,
+            'client_email': self.client_email,
 
-            'service_id': self.service_id,
+            'service_id': str(self.service_id)
+            if self.service_id else None,
+
             'service_title': (
                 self.service.title
-                if self.service
-                else None
+                if self.service else None
             ),
 
             'appointment_date': (
                 self.appointment_date.isoformat()
-                if self.appointment_date
-                else None
+                if self.appointment_date else None
             ),
 
             'appointment_time': (
                 self.appointment_time.strftime('%H:%M')
-                if self.appointment_time
-                else None
+                if self.appointment_time else None
             ),
 
-            'status': self.status,
-            'amount': self.amount,
             'mpesa_reference': self.mpesa_reference,
+            'amount': self.amount,
+            'status': self.status,
             'notes': self.notes,
 
             'created_at': (
                 self.created_at.isoformat()
-                if self.created_at
-                else None
+                if self.created_at else None
             ),
 
             'updated_at': (
                 self.updated_at.isoformat()
-                if self.updated_at
-                else None
+                if self.updated_at else None
             )
         }
 
