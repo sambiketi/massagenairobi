@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#fdf8f0',
+                            100: '#fbe8d0',
+                            200: '#f7d1a1',
+                            300: '#f3ba72',
+                            400: '#efa343',
+                            500: '#d4892e',
+                            600: '#b87424',
+                            700: '#9c5f1a',
+                            800: '#804a10',
+                            900: '#643506',
+                        },
+                        dark: {
+                            50: '#f7f7f7',
+                            100: '#e6e6e6',
+                            200: '#cccccc',
+                            300: '#b3b3b3',
+                            400: '#999999',
+                            500: '#808080',
+                            600: '#666666',
+                            700: '#4d4d4d',
+                            800: '#333333',
+                            900: '#1a1a1a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="min-h-screen bg-dark-50 flex">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar w-64 min-h-screen flex-shrink-0 hidden md:block">
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
+                        <i class="fas fa-spa text-dark-900"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-white font-bold text-lg">Admin</h2>
+                        <p class="text-gold-400 text-xs">Dashboard</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="p-4 space-y-1">
+                <a href="{{ url_for('admin.dashboard') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-pie w-5 text-center admin-sidebar-icon"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.therapists') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.therapists' %}active{% endif %}">
+                    <i class="fas fa-user-md w-5 text-center admin-sidebar-icon"></i>
+                    <span>Therapists</span>
+                </a>
+                <a href="{{ url_for('admin.services') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.services' %}active{% endif %}">
+                    <i class="fas fa-spa w-5 text-center admin-sidebar-icon"></i>
+                    <span>Services</span>
+                </a>
+                <a href="{{ url_for('admin.bookings') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.bookings' %}active{% endif %}">
+                    <i class="fas fa-calendar-check w-5 text-center admin-sidebar-icon"></i>
+                    <span>Bookings</span>
+                </a>
+                <a href="{{ url_for('admin.gallery') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.gallery' %}active{% endif %}">
+                    <i class="fas fa-images w-5 text-center admin-sidebar-icon"></i>
+                    <span>Gallery</span>
+                </a>
+                <a href="{{ url_for('admin.blog') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.blog' %}active{% endif %}">
+                    <i class="fas fa-newspaper w-5 text-center admin-sidebar-icon"></i>
+                    <span>Blog</span>
+                </a>
+                <a href="{{ url_for('admin.settings') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.settings' %}active{% endif %}">
+                    <i class="fas fa-cog w-5 text-center admin-sidebar-icon"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+                <a href="{{ url_for('admin.logout') }}" class="flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-900/20 transition-colors">
+                    <i class="fas fa-sign-out-alt w-5 text-center"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <div class="flex-1 min-w-0">
+            <!-- Top Bar -->
+            <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <button id="sidebarToggle" class="md:hidden text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h1 class="text-xl font-semibold text-dark-900">{% block page_title %}Dashboard{% endblock %}</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-600 hidden sm:inline">{{ current_user.name or current_user.username }}</span>
+                    <a href="{{ url_for('main.index') }}" target="_blank" class="text-gold-600 hover:text-gold-700">
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </header>
+            
+            <!-- Page Content -->
+            <main class="p-6">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    
+    <!-- Mobile Sidebar -->
+    <div id="mobileSidebar" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50" onclick="toggleMobileSidebar()"></div>
+        <aside class="admin-sidebar w-64 h-full relative">
+            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 flex items-center justify-center">
+                        <i class="fas fa-spa text-dark-900"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-white font-bold text-lg">Admin</h2>
+                        <p class="text-gold-400 text-xs">Dashboard</p>
+                    </div>
+                </div>
+                <button onclick="toggleMobileSidebar()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <nav class="p-4 space-y-1">
+                <a href="{{ url_for('admin.dashboard') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.dashboard' %}active{% endif %}">
+                    <i class="fas fa-chart-pie w-5 text-center admin-sidebar-icon"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin.therapists') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.therapists' %}active{% endif %}">
+                    <i class="fas fa-user-md w-5 text-center admin-sidebar-icon"></i>
+                    <span>Therapists</span>
+                </a>
+                <a href="{{ url_for('admin.services') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.services' %}active{% endif %}">
+                    <i class="fas fa-spa w-5 text-center admin-sidebar-icon"></i>
+                    <span>Services</span>
+                </a>
+                <a href="{{ url_for('admin.bookings') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.bookings' %}active{% endif %}">
+                    <i class="fas fa-calendar-check w-5 text-center admin-sidebar-icon"></i>
+                    <span>Bookings</span>
+                </a>
+                <a href="{{ url_for('admin.gallery') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.gallery' %}active{% endif %}">
+                    <i class="fas fa-images w-5 text-center admin-sidebar-icon"></i>
+                    <span>Gallery</span>
+                </a>
+                <a href="{{ url_for('admin.blog') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.blog' %}active{% endif %}">
+                    <i class="fas fa-newspaper w-5 text-center admin-sidebar-icon"></i>
+                    <span>Blog</span>
+                </a>
+                <a href="{{ url_for('admin.settings') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:text-white transition-colors {% if request.endpoint == 'admin.settings' %}active{% endif %}">
+                    <i class="fas fa-cog w-5 text-center admin-sidebar-icon"></i>
+                    <span>Settings</span>
+                </a>
+                <a href="{{ url_for('admin.logout') }}" class="admin-sidebar-item flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-900/20 transition-colors mt-4">
+                    <i class="fas fa-sign-out-alt w-5 text-center"></i>
+                    <span>Logout</span>
+                </a>
+            </nav>
+        </aside>
+    </div>
+    
+    <!-- Scripts -->
+    <script>
+        function toggleMobileSidebar() {
+            document.getElementById('mobileSidebar').classList.toggle('hidden');
+        }
+        
+        document.getElementById('sidebarToggle')?.addEventListener('click', toggleMobileSidebar);
+    </script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
