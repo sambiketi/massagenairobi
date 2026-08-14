@@ -5,37 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Admin Panel{% endblock %}</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Critical CSS -->
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f7f7f7; }
+        :root { --gold-500: #d4892e; --gold-600: #b87424; }
+        .hidden { display: none !important; }
+    </style>
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        gold: {
-                            50: '#fdf8f0',
-                            100: '#fbe8d0',
-                            200: '#f7d1a1',
-                            300: '#f3ba72',
-                            400: '#efa343',
-                            500: '#d4892e',
-                            600: '#b87424',
-                            700: '#9c5f1a',
-                            800: '#804a10',
-                            900: '#643506',
-                        },
-                        dark: {
-                            50: '#f7f7f7',
-                            100: '#e6e6e6',
-                            200: '#cccccc',
-                            300: '#b3b3b3',
-                            400: '#999999',
-                            500: '#808080',
-                            600: '#666666',
-                            700: '#4d4d4d',
-                            800: '#333333',
-                            900: '#1a1a1a',
-                        }
+                        gold: { 50: '#fdf8f0', 100: '#fbe8d0', 200: '#f7d1a1', 300: '#f3ba72', 400: '#efa343', 500: '#d4892e', 600: '#b87424', 700: '#9c5f1a', 800: '#804a10', 900: '#643506' },
+                        dark: { 50: '#f7f7f7', 100: '#e6e6e6', 200: '#cccccc', 300: '#b3b3b3', 400: '#999999', 500: '#808080', 600: '#666666', 700: '#4d4d4d', 800: '#333333', 900: '#1a1a1a' }
                     }
                 }
             }
@@ -43,17 +34,21 @@
     </script>
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js only on dashboard -->
+    {% if request.endpoint == 'admin.dashboard' %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    {% endif %}
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <!-- Custom CSS - Versioned -->
+    <link rel="stylesheet" href="{{ static_version('css/main.css') }}">
+    <link rel="stylesheet" href="{{ static_version('css/admin.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -191,15 +186,13 @@
         </aside>
     </div>
     
-    <!-- Scripts -->
     <script>
         function toggleMobileSidebar() {
             document.getElementById('mobileSidebar').classList.toggle('hidden');
         }
-        
         document.getElementById('sidebarToggle')?.addEventListener('click', toggleMobileSidebar);
     </script>
-    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+    <script src="{{ static_version('js/admin.js') }}" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
