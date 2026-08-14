@@ -20,7 +20,9 @@ cors = CORS()
 db.uuid = uuid
 
 def create_app(config_name=None):
-    app = Flask(__name__)
+    # FIX: Explicitly set static folder and URL path
+    app = Flask(__name__, static_folder='static', static_url_path='/static')
+    
     from app.config.settings import Config, DevelopmentConfig, ProductionConfig, TestingConfig
     env = os.environ.get('FLASK_ENV', 'development')
     if env == 'production':
