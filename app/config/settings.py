@@ -45,8 +45,8 @@ class Config:
         }
     }
     
-    # Supabase Storage (separate from DATABASE_URL)
-    SUPABASE_URL = os.environ.get('SUPABASE_URL')
+    # Supabase Storage
+    SUPABASE_URL = os.environ.get('SUPABASE_URL', '').rstrip('/')
     SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
 
     if not SUPABASE_URL:
