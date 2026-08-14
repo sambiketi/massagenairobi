@@ -51,11 +51,7 @@ class Booking(db.Model):
         nullable=False
     )
 
-    # Payment
-    mpesa_reference = db.Column(
-        db.String(50),
-        nullable=True
-    )
+   
 
     amount = db.Column(
         db.Integer,
@@ -95,7 +91,7 @@ class Booking(db.Model):
 
             'client_name': self.client_name,
             'client_phone': self.client_phone,
-            'client_email': self.client_email,
+        
 
             'service_id': str(self.service_id)
             if self.service_id else None,
@@ -115,7 +111,7 @@ class Booking(db.Model):
                 if self.appointment_time else None
             ),
 
-            'mpesa_reference': self.mpesa_reference,
+            
             'amount': self.amount,
             'status': self.status,
             'notes': self.notes,
