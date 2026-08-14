@@ -7,23 +7,6 @@ from app import db
 from app.models import Therapist, Service, Booking, GalleryImage, BlogPost
 from app.models.settings import SiteSetting  
 from app.models.admin import AdminUser
-
-# Helper function for safe file replacement
-def safe_replace_file(old_url, new_file, folder):
-    """
-    Safely replace a file: upload new, then delete old.
-    Returns the new URL or None if failed.
-    """
-    if not new_file or not new_file.filename:
-        return old_url  # No new file, keep old
-    
-    result = UploadService.replace_file(old_url, new_file, folder)
-    
-    if result.get('success'):
-        return result.get('url')
-    else:
-        current_app.logger.error(f"File replacement failed: {result.get('error')}")
-        return old_url  # Keep old URL if replacement failed
 from app.services.upload_service import UploadService
 
 admin_bp = Blueprint('admin', __name__)
@@ -150,14 +133,19 @@ def create_therapist():
             file = request.files['photo']
             if file and file.filename:
                 result = UploadService.upload_image(file, 'therapists', resize=(400, 400))
-                if result['success']:
-                    therapist.photo_url = result['url']
+                if result.get('success'):
+                    therapist.photo_url = result.get('url')
+                    current_app.logger.info(f"✅ Photo uploaded for {name}: {therapist.photo_url}")
+                else:
+                    current_app.logger.error(f"❌ Photo upload failed for {name}: {result.get('error')}")
+                    return jsonify({'success': False, 'error': f'Photo upload failed: {result.get("error")}'}), 400
         
         db.session.add(therapist)
         db.session.commit()
         return jsonify({'success': True, 'therapist': therapist.to_dict()})
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Create therapist error: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @admin_bp.route('/api/therapist/<therapist_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -186,18 +174,30 @@ def therapist_operations(therapist_id):
             if 'photo' in request.files:
                 file = request.files['photo']
                 if file and file.filename:
+                    old_url = therapist.photo_url
                     result = UploadService.upload_image(file, 'therapists', resize=(400, 400))
-                    if result['success']:
-                        therapist.photo_url = result['url']
+                    if result.get('success'):
+                        therapist.photo_url = result.get('url')
+                        # Delete old image if it exists and is different
+                        if old_url and old_url != therapist.photo_url:
+                            UploadService.delete_file(old_url)
+                        current_app.logger.info(f"✅ Photo updated for {therapist.name}: {therapist.photo_url}")
+                    else:
+                        current_app.logger.error(f"❌ Photo upload failed for {therapist.name}: {result.get('error')}")
+                        return jsonify({'success': False, 'error': f'Photo upload failed: {result.get("error")}'}), 400
             
             db.session.commit()
             return jsonify({'success': True, 'therapist': therapist.to_dict()})
         except Exception as e:
             db.session.rollback()
+            current_app.logger.error(f"Update therapist error: {str(e)}")
             return jsonify({'success': False, 'error': str(e)}), 500
     
     elif request.method == 'DELETE':
         try:
+            # Delete photo from storage if exists
+            if therapist.photo_url:
+                UploadService.delete_file(therapist.photo_url)
             db.session.delete(therapist)
             db.session.commit()
             return jsonify({'success': True})
@@ -238,14 +238,19 @@ def create_service():
             file = request.files['image']
             if file and file.filename:
                 result = UploadService.upload_image(file, 'services', resize=(800, 600))
-                if result['success']:
-                    service.image_url = result['url']
+                if result.get('success'):
+                    service.image_url = result.get('url')
+                    current_app.logger.info(f"✅ Image uploaded for {title}: {service.image_url}")
+                else:
+                    current_app.logger.error(f"❌ Image upload failed for {title}: {result.get('error')}")
+                    return jsonify({'success': False, 'error': f'Image upload failed: {result.get("error")}'}), 400
         
         db.session.add(service)
         db.session.commit()
         return jsonify({'success': True, 'service': service.to_dict()})
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Create service error: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @admin_bp.route('/api/service/<service_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -277,18 +282,28 @@ def service_operations(service_id):
             if 'image' in request.files:
                 file = request.files['image']
                 if file and file.filename:
+                    old_url = service.image_url
                     result = UploadService.upload_image(file, 'services', resize=(800, 600))
-                    if result['success']:
-                        service.image_url = result['url']
+                    if result.get('success'):
+                        service.image_url = result.get('url')
+                        if old_url and old_url != service.image_url:
+                            UploadService.delete_file(old_url)
+                        current_app.logger.info(f"✅ Image updated for {service.title}: {service.image_url}")
+                    else:
+                        current_app.logger.error(f"❌ Image upload failed for {service.title}: {result.get('error')}")
+                        return jsonify({'success': False, 'error': f'Image upload failed: {result.get("error")}'}), 400
             
             db.session.commit()
             return jsonify({'success': True, 'service': service.to_dict()})
         except Exception as e:
             db.session.rollback()
+            current_app.logger.error(f"Update service error: {str(e)}")
             return jsonify({'success': False, 'error': str(e)}), 500
     
     elif request.method == 'DELETE':
         try:
+            if service.image_url:
+                UploadService.delete_file(service.image_url)
             db.session.delete(service)
             db.session.commit()
             return jsonify({'success': True})
@@ -387,19 +402,24 @@ def upload_gallery():
         for file in files:
             if file and file.filename:
                 result = UploadService.upload_image(file, 'gallery', resize=(800, 600), create_thumbnail=True)
-                if result['success']:
+                if result.get('success'):
                     gallery_image = GalleryImage(
                         title=file.filename,
-                        url=result['url'],
+                        url=result.get('url'),
                         thumbnail_url=result.get('thumbnail_url')
                     )
                     db.session.add(gallery_image)
                     uploaded.append(gallery_image.to_dict())
+                    current_app.logger.info(f"✅ Gallery image uploaded: {result.get('url')}")
+                else:
+                    current_app.logger.error(f"❌ Gallery upload failed: {result.get('error')}")
+                    return jsonify({'success': False, 'error': f'Upload failed: {result.get("error")}'}), 400
         
         db.session.commit()
         return jsonify({'success': True, 'images': uploaded})
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Gallery upload error: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @admin_bp.route('/api/gallery/<image_id>', methods=['DELETE'])
@@ -408,7 +428,6 @@ def delete_gallery_image(image_id):
     try:
         image = GalleryImage.query.get_or_404(image_id)
         
-        # Try to delete from storage (doesn't fail if file missing)
         if image.url:
             UploadService.delete_file(image.url)
         if image.thumbnail_url:
@@ -462,14 +481,19 @@ def create_blog_post():
             file = request.files['image']
             if file and file.filename:
                 result = UploadService.upload_image(file, 'blog', resize=(1200, 630))
-                if result['success']:
-                    post.image_url = result['url']
+                if result.get('success'):
+                    post.image_url = result.get('url')
+                    current_app.logger.info(f"✅ Blog image uploaded for {title}: {post.image_url}")
+                else:
+                    current_app.logger.error(f"❌ Blog image upload failed for {title}: {result.get('error')}")
+                    return jsonify({'success': False, 'error': f'Image upload failed: {result.get("error")}'}), 400
         
         db.session.add(post)
         db.session.commit()
         return jsonify({'success': True, 'post': post.to_dict()})
     except Exception as e:
         db.session.rollback()
+        current_app.logger.error(f"Create blog error: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @admin_bp.route('/api/blog/<post_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -507,18 +531,28 @@ def blog_operations(post_id):
             if 'image' in request.files:
                 file = request.files['image']
                 if file and file.filename:
+                    old_url = post.image_url
                     result = UploadService.upload_image(file, 'blog', resize=(1200, 630))
-                    if result['success']:
-                        post.image_url = result['url']
+                    if result.get('success'):
+                        post.image_url = result.get('url')
+                        if old_url and old_url != post.image_url:
+                            UploadService.delete_file(old_url)
+                        current_app.logger.info(f"✅ Blog image updated for {post.title}: {post.image_url}")
+                    else:
+                        current_app.logger.error(f"❌ Blog image upload failed for {post.title}: {result.get('error')}")
+                        return jsonify({'success': False, 'error': f'Image upload failed: {result.get("error")}'}), 400
             
             db.session.commit()
             return jsonify({'success': True, 'post': post.to_dict()})
         except Exception as e:
             db.session.rollback()
+            current_app.logger.error(f"Update blog error: {str(e)}")
             return jsonify({'success': False, 'error': str(e)}), 500
     
     elif request.method == 'DELETE':
         try:
+            if post.image_url:
+                UploadService.delete_file(post.image_url)
             db.session.delete(post)
             db.session.commit()
             return jsonify({'success': True})
@@ -580,12 +614,12 @@ def upload_hero_video():
         file = request.files['hero_video']
         result = UploadService.upload_video(file, 'hero')
         
-        if not result['success']:
+        if not result.get('success'):
             return jsonify({'success': False, 'error': result.get('error')}), 400
         
-        SiteSetting.set_setting('hero_video_url', result['url'])
+        SiteSetting.set_setting('hero_video_url', result.get('url'))
         db.session.commit()
-        return jsonify({'success': True, 'url': result['url']})
+        return jsonify({'success': True, 'url': result.get('url')})
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -614,12 +648,12 @@ def upload_logo():
         file = request.files['logo']
         result = UploadService.upload_image(file, 'logo', resize=(200, 200))
         
-        if not result['success']:
+        if not result.get('success'):
             return jsonify({'success': False, 'error': result.get('error')}), 400
         
-        SiteSetting.set_setting('logo_url', result['url'])
+        SiteSetting.set_setting('logo_url', result.get('url'))
         db.session.commit()
-        return jsonify({'success': True, 'url': result['url']})
+        return jsonify({'success': True, 'url': result.get('url')})
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -648,12 +682,12 @@ def upload_background_image():
         file = request.files['background_image']
         result = UploadService.upload_image(file, 'background', resize=(1920, 1080))
         
-        if not result['success']:
+        if not result.get('success'):
             return jsonify({'success': False, 'error': result.get('error')}), 400
         
-        SiteSetting.set_setting('background_image_url', result['url'])
+        SiteSetting.set_setting('background_image_url', result.get('url'))
         db.session.commit()
-        return jsonify({'success': True, 'url': result['url']})
+        return jsonify({'success': True, 'url': result.get('url')})
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -671,8 +705,3 @@ def remove_background_image():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
-
-
-
-
-
