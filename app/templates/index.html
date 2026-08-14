@@ -82,36 +82,24 @@
                 <div class="flex items-center space-x-3">
                     <i class="fas fa-user-md text-gold-400 text-2xl"></i>
                     <div>
-                        <p class="text-white font-semibold">
-                            Expert Therapists
-                        </p>
-                        <p class="text-gray-400 text-sm">
-                            Certified & Experienced
-                        </p>
+                        <p class="text-white font-semibold">Expert Therapists</p>
+                        <p class="text-gray-400 text-sm">Certified & Experienced</p>
                     </div>
                 </div>
 
                 <div class="flex items-center space-x-3">
                     <i class="fas fa-shield-alt text-gold-400 text-2xl"></i>
                     <div>
-                        <p class="text-white font-semibold">
-                            Safe & Private
-                        </p>
-                        <p class="text-gray-400 text-sm">
-                            Premium Facilities
-                        </p>
+                        <p class="text-white font-semibold">Safe & Private</p>
+                        <p class="text-gray-400 text-sm">Premium Facilities</p>
                     </div>
                 </div>
 
                 <div class="flex items-center space-x-3">
                     <i class="fas fa-star text-gold-400 text-2xl"></i>
                     <div>
-                        <p class="text-white font-semibold">
-                            Premium Experience
-                        </p>
-                        <p class="text-gray-400 text-sm">
-                            Professional Service
-                        </p>
+                        <p class="text-white font-semibold">Premium Experience</p>
+                        <p class="text-gray-400 text-sm">Professional Service</p>
                     </div>
                 </div>
 
@@ -194,19 +182,16 @@
                     <div class="flex items-center justify-between">
 
                         <span class="text-sm text-gray-500">
-
                             <i class="far fa-clock mr-1"></i>
-
                             {{ service.duration_minutes }} min
-
                         </span>
 
                         <button
-                            onclick="openBookingModal()"
+                            type="button"
+                            onclick="openBookingModal('{{ service.id }}')"
                             class="text-gold-600 hover:text-gold-700 font-semibold transition-colors">
 
                             Book Now
-
                             <i class="fas fa-arrow-right ml-1"></i>
 
                         </button>
@@ -266,7 +251,6 @@
                 class="inline-block mt-4 text-gold-400 hover:text-gold-300 font-semibold transition-colors">
 
                 View All Therapists
-
                 <i class="fas fa-arrow-right ml-1"></i>
 
             </a>
@@ -326,7 +310,6 @@
                             <span class="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">
 
                                 <i class="fas fa-circle text-emerald-400 text-xs mr-1"></i>
-
                                 Available
 
                             </span>
@@ -336,7 +319,6 @@
                             <span class="bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">
 
                                 <i class="fas fa-circle text-red-400 text-xs mr-1"></i>
-
                                 Unavailable
 
                             </span>
@@ -362,11 +344,11 @@
                     {% if therapist.is_available %}
 
                     <button
+                        type="button"
                         onclick="openBookingModal()"
                         class="w-full bg-gold-500 hover:bg-gold-600 text-dark-900 py-3 rounded-xl font-semibold transition-colors duration-300">
 
                         <i class="fas fa-calendar-check mr-2"></i>
-
                         Book Your Session
 
                     </button>
@@ -410,10 +392,7 @@
             <h2 class="text-4xl md:text-5xl font-bold text-dark-900 mb-4 font-serif">
 
                 Our
-
-                <span class="text-gold-600">
-                    Sanctuary
-                </span>
+                <span class="text-gold-600">Sanctuary</span>
 
             </h2>
 
@@ -484,55 +463,40 @@
                 <h2 class="text-4xl font-bold text-white mb-6 font-serif">
 
                     Find
-
-                    <span class="text-gold-400">
-                        Us
-                    </span>
+                    <span class="text-gold-400">Us</span>
 
                 </h2>
 
                 <div class="space-y-5 text-gray-300">
 
                     <p class="flex items-start space-x-3">
-
                         <i class="fas fa-map-marker-alt text-gold-400 text-xl mt-1"></i>
-
                         <span>
                             {{ business_location|default('Nairobi West, Nairobi, Kenya') }}
                         </span>
-
                     </p>
 
                     <p class="flex items-start space-x-3">
-
                         <i class="fas fa-phone text-gold-400 text-xl mt-1"></i>
-
                         <span>
                             {{ business_phone|default('+254 700 000 000') }}
                         </span>
-
                     </p>
 
                     <p class="flex items-start space-x-3">
-
                         <i class="fas fa-envelope text-gold-400 text-xl mt-1"></i>
-
                         <span>
                             {{ business_email|default('info@sanctuarymassage.com') }}
                         </span>
-
                     </p>
 
                     <p class="flex items-start space-x-3">
-
                         <i class="fas fa-clock text-gold-400 text-xl mt-1"></i>
-
                         <span>
                             {{ weekday_hours|default('Mon-Sat: 9:00 AM - 9:00 PM') }}
                             <br>
                             {{ sunday_hours|default('Sunday: 10:00 AM - 6:00 PM') }}
                         </span>
-
                     </p>
 
                 </div>
@@ -544,7 +508,6 @@
                         class="bg-gold-500 hover:bg-gold-600 text-dark-900 px-6 py-3 rounded-full font-semibold transition-colors">
 
                         <i class="fas fa-phone mr-2"></i>
-
                         Call Us
 
                     </a>
@@ -556,7 +519,6 @@
                         class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-full font-semibold transition-colors border border-white/20">
 
                         <i class="fab fa-whatsapp mr-2"></i>
-
                         WhatsApp
 
                     </a>
@@ -603,6 +565,7 @@
         onclick="closeBookingModal()">
     </div>
 
+
     <!-- MODAL CONTAINER -->
     <div class="relative min-h-screen flex items-center justify-center p-3 sm:p-4">
 
@@ -619,7 +582,7 @@
                     </h2>
 
                     <p class="text-gray-400 text-xs mt-1">
-                        Choose your preferred date and time
+                        Choose your service, date and time
                     </p>
 
                 </div>
@@ -627,7 +590,7 @@
                 <button
                     type="button"
                     onclick="closeBookingModal()"
-                    class="text-gray-400 hover:text-white text-lg w-8 h-8 flex items-center justify-center">
+                    class="text-gray-400 hover:text-white text-xl w-8 h-8 flex items-center justify-center">
 
                     <i class="fas fa-times"></i>
 
@@ -641,26 +604,27 @@
                 id="bookingForm"
                 class="p-5 space-y-3">
 
-                <!-- NAME -->
+
+                <!-- CLIENT NAME -->
                 <div>
 
                     <label
                         for="bookingName"
                         class="block text-xs font-semibold text-gray-700 mb-1">
 
-                        Full Name
+                        Full Name <span class="text-red-500">*</span>
 
                     </label>
 
                     <input
                         type="text"
                         id="bookingName"
-                        name="name"
+                        name="client_name"
                         required
                         maxlength="100"
                         autocomplete="name"
                         placeholder="Your full name"
-                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
+                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none text-sm">
 
                 </div>
 
@@ -672,46 +636,57 @@
                         for="bookingPhone"
                         class="block text-xs font-semibold text-gray-700 mb-1">
 
-                        Phone Number
+                        Phone Number <span class="text-red-500">*</span>
 
                     </label>
 
                     <input
                         type="tel"
                         id="bookingPhone"
-                        name="phone"
+                        name="client_phone"
                         required
                         maxlength="20"
                         autocomplete="tel"
                         placeholder="07XX XXX XXX"
-                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
+                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none text-sm">
 
                 </div>
 
 
-                <!-- EMAIL -->
+                <!-- SERVICE -->
                 <div>
 
                     <label
-                        for="bookingEmail"
+                        for="bookingService"
                         class="block text-xs font-semibold text-gray-700 mb-1">
 
-                        Email
-
-                        <span class="text-gray-400 font-normal">
-                            (optional)
-                        </span>
+                        Service <span class="text-red-500">*</span>
 
                     </label>
 
-                    <input
-                        type="email"
-                        id="bookingEmail"
-                        name="email"
-                        maxlength="100"
-                        autocomplete="email"
-                        placeholder="you@example.com"
-                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
+                    <select
+                        id="bookingService"
+                        name="service_id"
+                        required
+                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none text-sm">
+
+                        <option value="">
+                            Select a service
+                        </option>
+
+                        {% for service in services %}
+
+                        <option
+                            value="{{ service.id }}">
+
+                            {{ service.title }}
+                            — KES {{ "{:,.0f}".format(service.price_kes) }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
 
                 </div>
 
@@ -719,46 +694,69 @@
                 <!-- DATE + TIME -->
                 <div class="grid grid-cols-2 gap-3">
 
-                    <!-- DATE -->
                     <div>
 
                         <label
                             for="bookingDate"
                             class="block text-xs font-semibold text-gray-700 mb-1">
 
-                            Preferred Date
+                            Date <span class="text-red-500">*</span>
 
                         </label>
 
                         <input
                             type="date"
                             id="bookingDate"
-                            name="date"
+                            name="appointment_date"
                             required
-                            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
+                            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none text-sm">
 
                     </div>
 
 
-                    <!-- TIME -->
                     <div>
 
                         <label
                             for="bookingTime"
                             class="block text-xs font-semibold text-gray-700 mb-1">
 
-                            Preferred Time
+                            Time <span class="text-red-500">*</span>
 
                         </label>
 
                         <input
                             type="time"
                             id="bookingTime"
-                            name="time"
+                            name="appointment_time"
                             required
-                            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
+                            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none text-sm">
 
                     </div>
+
+                </div>
+
+
+                <!-- NOTES -->
+                <div>
+
+                    <label
+                        for="bookingNotes"
+                        class="block text-xs font-semibold text-gray-700 mb-1">
+
+                        Notes
+                        <span class="text-gray-400 font-normal">
+                            (optional)
+                        </span>
+
+                    </label>
+
+                    <textarea
+                        id="bookingNotes"
+                        name="notes"
+                        rows="2"
+                        maxlength="1000"
+                        placeholder="Any special requests or information..."
+                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none text-sm resize-none"></textarea>
 
                 </div>
 
@@ -781,10 +779,9 @@
                 <button
                     type="submit"
                     id="bookingSubmit"
-                    class="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 py-3 rounded-lg font-bold text-sm hover:shadow-lg hover:shadow-gold-500/20 transition-all">
+                    class="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 py-3 rounded-lg font-bold text-sm hover:shadow-lg transition-all">
 
                     <i class="fas fa-calendar-check mr-2"></i>
-
                     Submit Booking
 
                 </button>
@@ -819,30 +816,45 @@ const bookingSubmit =
     document.getElementById('bookingSubmit');
 
 
-// ---------------------------------------------------------
-// OPEN MODAL
-// ---------------------------------------------------------
-function openBookingModal() {
+// ============================================================
+// OPEN BOOKING MODAL
+// ============================================================
+
+function openBookingModal(serviceId = '') {
 
     bookingModal.classList.remove('hidden');
 
     document.body.style.overflow = 'hidden';
 
     bookingError.classList.add('hidden');
-
     bookingSuccess.classList.add('hidden');
+
+
+    // Set minimum date to today
 
     const today =
         new Date().toISOString().split('T')[0];
 
     document.getElementById('bookingDate').min = today;
 
+
+    // Pre-select service when Book Now was clicked
+
+    if (serviceId) {
+
+        document.getElementById(
+            'bookingService'
+        ).value = serviceId;
+
+    }
+
 }
 
 
-// ---------------------------------------------------------
-// CLOSE MODAL
-// ---------------------------------------------------------
+// ============================================================
+// CLOSE BOOKING MODAL
+// ============================================================
+
 function closeBookingModal() {
 
     bookingModal.classList.add('hidden');
@@ -852,59 +864,69 @@ function closeBookingModal() {
 }
 
 
-// ---------------------------------------------------------
+// ============================================================
 // SUBMIT BOOKING
-// ---------------------------------------------------------
+// ============================================================
+
 bookingForm.addEventListener(
     'submit',
     async function(event) {
 
         event.preventDefault();
 
-        bookingError.classList.add('hidden');
 
+        bookingError.classList.add('hidden');
         bookingSuccess.classList.add('hidden');
 
 
+        // Get database fields
+
         const data = {
 
-            name:
+            client_name:
                 document
                     .getElementById('bookingName')
                     .value
                     .trim(),
 
-            phone:
+            client_phone:
                 document
                     .getElementById('bookingPhone')
                     .value
                     .trim(),
 
-            email:
+            service_id:
                 document
-                    .getElementById('bookingEmail')
-                    .value
-                    .trim(),
+                    .getElementById('bookingService')
+                    .value,
 
-            date:
+            appointment_date:
                 document
                     .getElementById('bookingDate')
                     .value,
 
-            time:
+            appointment_time:
                 document
                     .getElementById('bookingTime')
+                    .value,
+
+            notes:
+                document
+                    .getElementById('bookingNotes')
                     .value
+                    .trim()
 
         };
 
 
-        // BASIC VALIDATION
+        // Validate required DB fields
+
         if (
-            !data.name ||
-            !data.phone ||
-            !data.date ||
-            !data.time
+            !data.client_name ||
+            !data.client_phone ||
+            !data.service_id ||
+            !data.appointment_date ||
+            !data.appointment_time
         ) {
 
             bookingError.textContent =
@@ -917,7 +939,8 @@ bookingForm.addEventListener(
         }
 
 
-        // DISABLE BUTTON
+        // Disable button
+
         bookingSubmit.disabled = true;
 
         bookingSubmit.innerHTML =
@@ -959,21 +982,24 @@ bookingForm.addEventListener(
             }
 
 
-            // SUCCESS
+            // Success
+
             bookingSuccess.innerHTML = `
                 <strong>Booking request submitted!</strong>
                 <br>
-                We have received your preferred date and time.
+                We have received your appointment request.
             `;
 
             bookingSuccess.classList.remove('hidden');
 
 
-            // RESET FORM
+            // Reset form
+
             bookingForm.reset();
 
 
-            // WHATSAPP CONFIRMATION
+            // WhatsApp confirmation
+
             if (result.whatsapp_url) {
 
                 setTimeout(() => {
@@ -1014,9 +1040,10 @@ bookingForm.addEventListener(
 );
 
 
-// ---------------------------------------------------------
+// ============================================================
 // ESCAPE KEY
-// ---------------------------------------------------------
+// ============================================================
+
 document.addEventListener(
     'keydown',
     function(event) {
@@ -1034,15 +1061,18 @@ document.addEventListener(
 );
 
 
-// ---------------------------------------------------------
-// PREVENT PAST DATES
-// ---------------------------------------------------------
+// ============================================================
+// SET MINIMUM DATE
+// ============================================================
+
 document.addEventListener(
     'DOMContentLoaded',
     function() {
 
         const dateInput =
-            document.getElementById('bookingDate');
+            document.getElementById(
+                'bookingDate'
+            );
 
         if (dateInput) {
 
