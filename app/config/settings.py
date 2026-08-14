@@ -43,7 +43,17 @@ class Config:
             'keepalives_interval': int(os.environ.get('DB_KEEPALIVE_INTERVAL', 10)),
             'keepalives_count': int(os.environ.get('DB_KEEPALIVE_COUNT', 5)),
         }
-    }
+    
+    # Supabase Storage (separate from DATABASE_URL)
+    SUPABASE_URL = os.environ.get('SUPABASE_URL')
+    SUPABASE_SERVICE_ROLE_KEY = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
+
+    if not SUPABASE_URL:
+        raise ValueError("SUPABASE_URL must be set in environment variables")
+
+    if not SUPABASE_SERVICE_ROLE_KEY:
+        raise ValueError("SUPABASE_SERVICE_ROLE_KEY must be set in environment variables for storage")
+}
     
     # Business
     BUSINESS_NAME = os.environ.get('BUSINESS_NAME', 'Sanctuary Massage')
@@ -74,3 +84,4 @@ class TestingConfig(Config):
     TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
+

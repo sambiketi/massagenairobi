@@ -1,4 +1,4 @@
-import os
+﻿import os
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime, timedelta
@@ -7,6 +7,23 @@ from app import db
 from app.models import Therapist, Service, Booking, GalleryImage, BlogPost
 from app.models.settings import SiteSetting  
 from app.models.admin import AdminUser
+
+# Helper function for safe file replacement
+def safe_replace_file(old_url, new_file, folder):
+    """
+    Safely replace a file: upload new, then delete old.
+    Returns the new URL or None if failed.
+    """
+    if not new_file or not new_file.filename:
+        return old_url  # No new file, keep old
+    
+    result = UploadService.replace_file(old_url, new_file, folder)
+    
+    if result.get('success'):
+        return result.get('url')
+    else:
+        current_app.logger.error(f"File replacement failed: {result.get('error')}")
+        return old_url  # Keep old URL if replacement failed
 from app.services.upload_service import UploadService
 
 admin_bp = Blueprint('admin', __name__)
@@ -390,6 +407,13 @@ def upload_gallery():
 def delete_gallery_image(image_id):
     try:
         image = GalleryImage.query.get_or_404(image_id)
+        
+        # Try to delete from storage (doesn't fail if file missing)
+        if image.url:
+            UploadService.delete_file(image.url)
+        if image.thumbnail_url:
+            UploadService.delete_file(image.thumbnail_url)
+        
         db.session.delete(image)
         db.session.commit()
         return jsonify({'success': True})
@@ -570,6 +594,9 @@ def upload_hero_video():
 @login_required
 def remove_hero_video():
     try:
+        old_video = SiteSetting.get_setting('hero_video_url')
+        if old_video:
+            UploadService.delete_file(old_video)
         SiteSetting.set_setting('hero_video_url', None)
         db.session.commit()
         return jsonify({'success': True})
@@ -601,6 +628,9 @@ def upload_logo():
 @login_required
 def remove_logo():
     try:
+        old_logo = SiteSetting.get_setting('logo_url')
+        if old_logo:
+            UploadService.delete_file(old_logo)
         SiteSetting.set_setting('logo_url', None)
         db.session.commit()
         return jsonify({'success': True})
@@ -632,9 +662,17 @@ def upload_background_image():
 @login_required
 def remove_background_image():
     try:
+        old_bg = SiteSetting.get_setting('background_image_url')
+        if old_bg:
+            UploadService.delete_file(old_bg)
         SiteSetting.set_setting('background_image_url', None)
         db.session.commit()
         return jsonify({'success': True})
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+
+
+
