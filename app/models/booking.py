@@ -23,10 +23,7 @@ class Booking(db.Model):
         nullable=False
     )
 
-    client_email = db.Column(
-        db.String(100),
-        nullable=True
-    )
+   
 
     # Service
     service_id = db.Column(
