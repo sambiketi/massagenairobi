@@ -1,7 +1,6 @@
 from app import db
 from datetime import datetime
 import uuid
-from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 
 
@@ -14,11 +13,28 @@ class Therapist(db.Model):
         default=uuid.uuid4
     )
 
-    name = db.Column(db.String(100), nullable=False)
-    specialty = db.Column(db.String(150))
-    bio = db.Column(db.Text)
-    photo_url = db.Column(db.String(500))
-    is_available = db.Column(db.Boolean, default=True)
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    specialty = db.Column(
+        db.String(150)
+    )
+
+    bio = db.Column(
+        db.Text
+    )
+
+    photo_url = db.Column(
+        db.String(500)
+    )
+
+    is_available = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
 
     created_at = db.Column(
         db.DateTime,
@@ -29,12 +45,6 @@ class Therapist(db.Model):
         db.DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow
-    )
-
-    bookings = relationship(
-        'Booking',
-        backref='therapist',
-        lazy=True
     )
 
     def to_dict(self):
