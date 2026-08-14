@@ -5,89 +5,112 @@
 {% block content %}
 
 <div class="min-h-screen bg-dark-50">
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        <!-- Header -->
-        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-8">
+        <!-- HEADER -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+
             <div>
                 <h1 class="text-3xl font-bold text-dark-900">
                     Bookings
                 </h1>
-                <p class="text-gray-600">
+
+                <p class="text-gray-600 mt-1">
                     View and manage client appointments
                 </p>
             </div>
 
-            <!-- Filters -->
-            <div class="flex flex-col sm:flex-row gap-3">
+            <!-- FILTER -->
+            <form method="GET" action="{{ url_for('admin.bookings') }}"
+                  class="flex flex-col sm:flex-row gap-3">
 
                 <select
-                    id="statusFilter"
-                    onchange="filterBookings()"
+                    name="status"
+                    onchange="this.form.submit()"
                     class="px-4 py-2 rounded-xl border-2 border-gray-200
-                           focus:border-gold-400 outline-none bg-white">
+                           bg-white outline-none focus:border-gold-400">
 
                     <option value="">All Status</option>
+
                     <option value="Pending"
-                        {% if request.args.get('status') == 'Pending' %}selected{% endif %}>
+                        {% if request.args.get('status') == 'Pending' %}
+                            selected
+                        {% endif %}>
                         Pending
                     </option>
 
                     <option value="Confirmed"
-                        {% if request.args.get('status') == 'Confirmed' %}selected{% endif %}>
+                        {% if request.args.get('status') == 'Confirmed' %}
+                            selected
+                        {% endif %}>
                         Confirmed
                     </option>
 
                     <option value="Completed"
-                        {% if request.args.get('status') == 'Completed' %}selected{% endif %}>
+                        {% if request.args.get('status') == 'Completed' %}
+                            selected
+                        {% endif %}>
                         Completed
                     </option>
 
                     <option value="Cancelled"
-                        {% if request.args.get('status') == 'Cancelled' %}selected{% endif %}>
+                        {% if request.args.get('status') == 'Cancelled' %}
+                            selected
+                        {% endif %}>
                         Cancelled
                     </option>
 
                 </select>
 
-                <input
-                    type="date"
-                    id="dateFilter"
-                    value="{{ request.args.get('date', '') }}"
-                    onchange="filterBookings()"
-                    class="px-4 py-2 rounded-xl border-2 border-gray-200
-                           focus:border-gold-400 outline-none bg-white">
-            </div>
+            </form>
+
         </div>
 
 
-        <!-- Stats -->
+        <!-- STATISTICS -->
+
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
-            <div class="bg-white rounded-xl p-4 shadow-sm">
-                <p class="text-sm text-gray-500">Total</p>
-                <p class="text-2xl font-bold text-dark-900">
+            <div class="bg-white rounded-2xl p-5 shadow-sm">
+                <p class="text-sm text-gray-500">
+                    Total
+                </p>
+
+                <p class="text-3xl font-bold text-dark-900 mt-1">
                     {{ stats.total|default(0) }}
                 </p>
             </div>
 
-            <div class="bg-white rounded-xl p-4 shadow-sm">
-                <p class="text-sm text-gray-500">Pending</p>
-                <p class="text-2xl font-bold text-yellow-600">
+
+            <div class="bg-white rounded-2xl p-5 shadow-sm">
+                <p class="text-sm text-gray-500">
+                    Pending
+                </p>
+
+                <p class="text-3xl font-bold text-yellow-600 mt-1">
                     {{ stats.pending|default(0) }}
                 </p>
             </div>
 
-            <div class="bg-white rounded-xl p-4 shadow-sm">
-                <p class="text-sm text-gray-500">Confirmed</p>
-                <p class="text-2xl font-bold text-emerald-600">
+
+            <div class="bg-white rounded-2xl p-5 shadow-sm">
+                <p class="text-sm text-gray-500">
+                    Confirmed
+                </p>
+
+                <p class="text-3xl font-bold text-emerald-600 mt-1">
                     {{ stats.confirmed|default(0) }}
                 </p>
             </div>
 
-            <div class="bg-white rounded-xl p-4 shadow-sm">
-                <p class="text-sm text-gray-500">Completed</p>
-                <p class="text-2xl font-bold text-blue-600">
+
+            <div class="bg-white rounded-2xl p-5 shadow-sm">
+                <p class="text-sm text-gray-500">
+                    Completed
+                </p>
+
+                <p class="text-3xl font-bold text-blue-600 mt-1">
                     {{ stats.completed|default(0) }}
                 </p>
             </div>
@@ -95,23 +118,38 @@
         </div>
 
 
-        <!-- Bookings Table -->
+        <!-- BOOKINGS TABLE -->
+
         <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+
+            <div class="px-6 py-4 border-b border-gray-100">
+
+                <h2 class="font-semibold text-dark-900">
+                    Client Appointments
+                </h2>
+
+            </div>
+
 
             <div class="overflow-x-auto">
 
                 <table class="data-table w-full">
 
                     <thead>
+
                         <tr>
                             <th>Client</th>
                             <th>Phone</th>
+                            <th>Service</th>
                             <th>Date</th>
                             <th>Time</th>
+                            <th>Amount</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
+
                     </thead>
+
 
                     <tbody>
 
@@ -119,16 +157,29 @@
 
                         <tr>
 
-                            <!-- Client -->
+                            <!-- CLIENT -->
+
                             <td>
-                                <p class="font-medium text-dark-900">
-                                    {{ booking.client_name }}
-                                </p>
+
+                                <div>
+                                    <p class="font-semibold text-dark-900">
+                                        {{ booking.client_name }}
+                                    </p>
+
+                                    {% if booking.client_email %}
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        {{ booking.client_email }}
+                                    </p>
+                                    {% endif %}
+                                </div>
+
                             </td>
 
 
-                            <!-- Phone -->
+                            <!-- PHONE -->
+
                             <td>
+
                                 <a
                                     href="tel:{{ booking.client_phone }}"
                                     class="text-gray-600 hover:text-gold-600">
@@ -136,83 +187,142 @@
                                     {{ booking.client_phone }}
 
                                 </a>
+
                             </td>
 
 
-                            <!-- Date -->
+                            <!-- SERVICE -->
+
                             <td>
-                                <p class="font-medium">
+
+                                {% if booking.service %}
+
+                                <div>
+
+                                    <p class="font-medium text-dark-900">
+                                        {{ booking.service.title }}
+                                    </p>
+
+                                    <p class="text-xs text-gray-500">
+                                        {{ booking.service.duration_minutes }} min
+                                    </p>
+
+                                </div>
+
+                                {% else %}
+
+                                <span class="text-gray-400">
+                                    No service
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- DATE -->
+
+                            <td>
+
+                                <span class="font-medium">
                                     {{ booking.appointment_date }}
-                                </p>
+                                </span>
+
                             </td>
 
 
-                            <!-- Time -->
+                            <!-- TIME -->
+
                             <td>
-                                <p class="text-gray-600">
-                                    {{ booking.appointment_time }}
-                                </p>
+
+                                <span class="text-gray-600">
+                                    {{ booking.appointment_time.strftime('%H:%M')
+                                       if booking.appointment_time
+                                       else '-' }}
+                                </span>
+
                             </td>
 
 
-                            <!-- Status -->
+                            <!-- AMOUNT -->
+
                             <td>
 
-                                <span
-                                    class="badge
-                                    {% if booking.status == 'Confirmed' %}
-                                        badge-success
-                                    {% elif booking.status == 'Pending' %}
-                                        badge-warning
-                                    {% elif booking.status == 'Completed' %}
-                                        badge-info
-                                    {% elif booking.status == 'Cancelled' %}
-                                        badge-danger
-                                    {% else %}
-                                        badge-warning
-                                    {% endif %}">
+                                <span class="font-semibold text-dark-900">
 
-                                    {{ booking.status }}
+                                    KES
+                                    {{ "{:,.0f}".format(
+                                        booking.amount|default(0)
+                                    ) }}
 
                                 </span>
 
                             </td>
 
 
-                            <!-- Actions -->
+                            <!-- STATUS -->
+
                             <td>
 
-                                <div class="flex items-center space-x-3">
+                                {% if booking.status == 'Confirmed' %}
 
-                                    <!-- Edit -->
+                                <span class="badge badge-success">
+                                    Confirmed
+                                </span>
+
+                                {% elif booking.status == 'Pending' %}
+
+                                <span class="badge badge-warning">
+                                    Pending
+                                </span>
+
+                                {% elif booking.status == 'Completed' %}
+
+                                <span class="badge badge-info">
+                                    Completed
+                                </span>
+
+                                {% elif booking.status == 'Cancelled' %}
+
+                                <span class="badge badge-danger">
+                                    Cancelled
+                                </span>
+
+                                {% else %}
+
+                                <span class="badge badge-warning">
+                                    {{ booking.status }}
+                                </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- ACTIONS -->
+
+                            <td>
+
+                                <div class="flex items-center gap-3">
+
                                     <button
+                                        type="button"
                                         onclick="editBooking('{{ booking.id }}')"
-                                        class="text-gold-600 hover:text-gold-800 transition-colors"
-                                        title="Edit booking">
+                                        class="text-gold-600 hover:text-gold-800"
+                                        title="Edit">
 
                                         <i class="fas fa-edit"></i>
 
                                     </button>
 
 
-                                    <!-- Delete -->
-                                    <button
-                                        onclick="deleteBooking('{{ booking.id }}')"
-                                        class="text-red-500 hover:text-red-700 transition-colors"
-                                        title="Delete booking">
-
-                                        <i class="fas fa-trash"></i>
-
-                                    </button>
-
-
-                                    <!-- Confirm -->
                                     {% if booking.status == 'Pending' %}
 
                                     <button
+                                        type="button"
                                         onclick="confirmBooking('{{ booking.id }}')"
-                                        class="text-emerald-600 hover:text-emerald-800 transition-colors"
-                                        title="Confirm booking">
+                                        class="text-emerald-600 hover:text-emerald-800"
+                                        title="Confirm">
 
                                         <i class="fas fa-check-circle"></i>
 
@@ -226,24 +336,28 @@
 
                         </tr>
 
+
                         {% else %}
 
                         <tr>
 
                             <td
-                                colspan="6"
-                                class="text-center py-12 text-gray-500">
+                                colspan="8"
+                                class="text-center py-16">
 
                                 <div class="flex flex-col items-center">
 
-                                    <i class="fas fa-calendar-xmark text-4xl mb-3 text-gray-300"></i>
+                                    <i
+                                        class="fas fa-calendar-xmark
+                                               text-5xl text-gray-300 mb-4">
+                                    </i>
 
-                                    <p class="font-medium">
-                                        No bookings found
-                                    </p>
+                                    <h3 class="font-semibold text-gray-700">
+                                        No bookings yet
+                                    </h3>
 
-                                    <p class="text-sm mt-1">
-                                        New appointments will appear here.
+                                    <p class="text-sm text-gray-500 mt-1">
+                                        New client appointments will appear here.
                                     </p>
 
                                 </div>
@@ -263,17 +377,20 @@
         </div>
 
     </div>
+
 </div>
 
 
-<!-- ==================== EDIT BOOKING MODAL ==================== -->
+<!-- ========================================================= -->
+<!-- EDIT BOOKING MODAL -->
+<!-- ========================================================= -->
 
 <div
     id="bookingModal"
     class="fixed inset-0 z-50 hidden">
 
     <div
-        class="modal-overlay absolute inset-0"
+        class="absolute inset-0 bg-black/50"
         onclick="closeBookingModal()">
     </div>
 
@@ -281,20 +398,22 @@
     <div class="relative min-h-screen flex items-center justify-center p-4">
 
         <div
-            class="modal-content bg-white rounded-3xl max-w-lg w-full shadow-2xl">
+            class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
 
-            <!-- Modal Header -->
+            <!-- HEADER -->
+
             <div
-                class="sticky top-0 bg-white px-6 py-4 border-b
-                       border-gray-200 flex justify-between items-center">
+                class="flex items-center justify-between
+                       px-6 py-5 border-b border-gray-100">
 
-                <h3 class="text-2xl font-bold text-dark-900">
+                <h3 class="text-xl font-bold text-dark-900">
                     Update Booking
                 </h3>
 
                 <button
+                    type="button"
                     onclick="closeBookingModal()"
-                    class="text-gray-400 hover:text-dark-900 text-2xl">
+                    class="text-gray-400 hover:text-dark-900 text-xl">
 
                     <i class="fas fa-times"></i>
 
@@ -303,68 +422,62 @@
             </div>
 
 
-            <!-- Form -->
-            <form
-                id="bookingForm"
-                class="p-6 space-y-4">
+            <!-- FORM -->
+
+            <form id="bookingForm" class="p-6">
 
                 <input
                     type="hidden"
-                    id="editBookingId"
-                    name="bookingId">
+                    id="editBookingId">
 
 
-                <!-- Status -->
-                <div>
+                <label
+                    class="block text-sm font-medium text-gray-700 mb-2">
 
-                    <label
-                        class="block text-sm font-medium text-gray-700 mb-1">
+                    Booking Status
 
-                        Status
-
-                    </label>
-
-                    <select
-                        id="editBookingStatus"
-                        name="status"
-                        class="w-full px-4 py-3 rounded-xl border-2
-                               border-gray-200 focus:border-gold-400
-                               outline-none">
-
-                        <option value="Pending">
-                            Pending
-                        </option>
-
-                        <option value="Confirmed">
-                            Confirmed
-                        </option>
-
-                        <option value="Completed">
-                            Completed
-                        </option>
-
-                        <option value="Cancelled">
-                            Cancelled
-                        </option>
-
-                    </select>
-
-                </div>
+                </label>
 
 
-                <!-- Submit -->
+                <select
+                    id="editBookingStatus"
+                    class="w-full px-4 py-3 rounded-xl
+                           border-2 border-gray-200
+                           focus:border-gold-400
+                           outline-none">
+
+                    <option value="Pending">
+                        Pending
+                    </option>
+
+                    <option value="Confirmed">
+                        Confirmed
+                    </option>
+
+                    <option value="Completed">
+                        Completed
+                    </option>
+
+                    <option value="Cancelled">
+                        Cancelled
+                    </option>
+
+                </select>
+
+
                 <button
                     type="submit"
-                    class="w-full bg-gradient-to-r
+                    class="w-full mt-5
+                           bg-gradient-to-r
                            from-gold-500 to-gold-600
-                           text-dark-900 py-3 rounded-xl
-                           font-semibold hover:shadow-lg
-                           hover:shadow-gold-500/30
+                           text-dark-900
+                           py-3 rounded-xl
+                           font-semibold
+                           hover:shadow-lg
                            transition-all">
 
                     <i class="fas fa-save mr-2"></i>
-
-                    Update Booking
+                    Save Changes
 
                 </button>
 
@@ -381,92 +494,90 @@
 
 let currentBookingId = null;
 
-const bookingModal = document.getElementById('bookingModal');
+const modal =
+    document.getElementById('bookingModal');
 
 
-// ==================== FILTERS ====================
+// ============================================================
+// EDIT
+// ============================================================
 
-function filterBookings() {
+async function editBooking(id) {
 
-    const status =
-        document.getElementById('statusFilter').value;
-
-    const date =
-        document.getElementById('dateFilter').value;
-
-    const params = new URLSearchParams();
-
-    if (status) {
-        params.append('status', status);
-    }
-
-    if (date) {
-        params.append('date', date);
-    }
-
-    const query =
-        params.toString();
-
-    window.location.href =
-        '/admin/bookings' +
-        (query ? '?' + query : '');
-}
-
-
-// ==================== EDIT ====================
-
-async function editBooking(bookingId) {
-
-    currentBookingId = bookingId;
+    currentBookingId = id;
 
     try {
 
         const response =
-            await fetch('/admin/api/booking/' + bookingId);
+            await fetch('/admin/api/booking/' + id);
 
-        const data =
+        const result =
             await response.json();
 
         if (!response.ok) {
+
             throw new Error(
-                data.error || 'Failed to load booking'
+                result.error || 'Unable to load booking'
             );
+
         }
 
-        document.getElementById('editBookingId').value =
-            data.id;
+        /*
+         * Support either:
+         *
+         * { id, status }
+         *
+         * OR
+         *
+         * { success: true, booking: {...} }
+         */
 
-        document.getElementById('editBookingStatus').value =
-            data.status;
+        const booking =
+            result.booking || result;
 
-        bookingModal.classList.remove('hidden');
+        document.getElementById(
+            'editBookingId'
+        ).value = booking.id;
+
+        document.getElementById(
+            'editBookingStatus'
+        ).value = booking.status;
+
+        modal.classList.remove('hidden');
 
         document.body.style.overflow = 'hidden';
 
     } catch (error) {
 
-        console.error('Booking load error:', error);
+        console.error(error);
 
         alert(
             'Unable to load booking. Please try again.'
         );
+
     }
 }
 
 
-// ==================== CLOSE MODAL ====================
+// ============================================================
+// CLOSE
+// ============================================================
 
 function closeBookingModal() {
 
-    bookingModal.classList.add('hidden');
+    modal.classList.add('hidden');
 
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = '';
+
+    currentBookingId = null;
 }
 
 
-// ==================== CONFIRM ====================
+// ============================================================
+// CONFIRM
+// ============================================================
 
-async function confirmBooking(bookingId) {
+async function confirmBooking(id) {
 
     if (!confirm('Confirm this booking?')) {
         return;
@@ -477,7 +588,7 @@ async function confirmBooking(bookingId) {
         const response =
             await fetch(
                 '/admin/api/booking/' +
-                bookingId +
+                id +
                 '/confirm',
                 {
                     method: 'PUT'
@@ -491,178 +602,105 @@ async function confirmBooking(bookingId) {
 
             throw new Error(
                 result.error ||
-                'Failed to confirm booking'
+                'Unable to confirm booking'
             );
+
         }
 
-        location.reload();
+        window.location.reload();
 
     } catch (error) {
 
-        console.error(
-            'Confirm booking error:',
-            error
-        );
+        console.error(error);
 
         alert(error.message);
+
     }
 }
 
 
-// ==================== DELETE ====================
-
-async function deleteBooking(bookingId) {
-
-    if (
-        !confirm(
-            'Are you sure you want to permanently delete this booking?'
-        )
-    ) {
-        return;
-    }
-
-    try {
-
-        const response =
-            await fetch(
-                '/admin/api/booking/' + bookingId,
-                {
-                    method: 'DELETE'
-                }
-            );
-
-        const result =
-            await response.json();
-
-        if (!response.ok || !result.success) {
-
-            throw new Error(
-                result.error ||
-                'Failed to delete booking'
-            );
-        }
-
-        location.reload();
-
-    } catch (error) {
-
-        console.error(
-            'Delete booking error:',
-            error
-        );
-
-        alert(error.message);
-    }
-}
-
-
-// ==================== UPDATE ====================
+// ============================================================
+// UPDATE
+// ============================================================
 
 document
     .getElementById('bookingForm')
-    .addEventListener(
-        'submit',
-        async function (e) {
+    .addEventListener('submit', async function(event) {
 
-            e.preventDefault();
+        event.preventDefault();
 
-            if (!currentBookingId) {
-                return;
-            }
+        if (!currentBookingId) {
+            return;
+        }
 
-            const status =
-                document.getElementById(
-                    'editBookingStatus'
-                ).value;
+        const status =
+            document.getElementById(
+                'editBookingStatus'
+            ).value;
 
-            try {
+        try {
 
-                const response =
-                    await fetch(
-                        '/admin/api/booking/' +
-                        currentBookingId,
-                        {
-                            method: 'PUT',
+            const response =
+                await fetch(
+                    '/admin/api/booking/' +
+                    currentBookingId,
+                    {
+                        method: 'PUT',
 
-                            headers: {
-                                'Content-Type':
-                                    'application/json'
-                            },
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
 
-                            body: JSON.stringify({
-                                status: status
-                            })
-                        }
-                    );
-
-                const result =
-                    await response.json();
-
-                if (
-                    !response.ok ||
-                    !result.success
-                ) {
-
-                    throw new Error(
-                        result.error ||
-                        'Failed to update booking'
-                    );
-                }
-
-                closeBookingModal();
-
-                location.reload();
-
-            } catch (error) {
-
-                console.error(
-                    'Update booking error:',
-                    error
+                        body: JSON.stringify({
+                            status: status
+                        })
+                    }
                 );
 
-                alert(error.message);
+            const result =
+                await response.json();
+
+            if (!response.ok || !result.success) {
+
+                throw new Error(
+                    result.error ||
+                    'Unable to update booking'
+                );
+
             }
-        }
-    );
-
-
-// ==================== BACKDROP ====================
-
-bookingModal.addEventListener(
-    'click',
-    function (e) {
-
-        if (
-            e.target.classList.contains(
-                'modal-overlay'
-            )
-        ) {
 
             closeBookingModal();
 
-        }
+            window.location.reload();
 
-    }
-);
+        } catch (error) {
 
+            console.error(error);
 
-// ==================== ESC KEY ====================
-
-document.addEventListener(
-    'keydown',
-    function (e) {
-
-        if (
-            e.key === 'Escape' &&
-            !bookingModal.classList.contains('hidden')
-        ) {
-
-            closeBookingModal();
+            alert(error.message);
 
         }
 
+    });
+
+
+// ============================================================
+// ESCAPE KEY
+// ============================================================
+
+document.addEventListener('keydown', function(event) {
+
+    if (
+        event.key === 'Escape' &&
+        !modal.classList.contains('hidden')
+    ) {
+
+        closeBookingModal();
+
     }
-);
+
+});
 
 </script>
 
