@@ -8,6 +8,7 @@ from app.models import Therapist, Service, Booking, GalleryImage, BlogPost
 from app.models.settings import SiteSetting  
 from app.models.admin import AdminUser
 from app.services.upload_service import UploadService
+from app.services.supabase_storage import SupabaseStorage
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -664,3 +665,10 @@ def remove_background_image():
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+    #debug route
+
+@admin_bp.route('/api/test-storage')
+@login_required
+def test_storage():
+    result = SupabaseStorage.debug_connection()
+    return jsonify(result)
