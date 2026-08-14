@@ -23,8 +23,6 @@ class Booking(db.Model):
         nullable=False
     )
 
-   
-
     # Service
     service_id = db.Column(
         db.UUID(as_uuid=True),
@@ -50,8 +48,6 @@ class Booking(db.Model):
         db.Time,
         nullable=False
     )
-
-   
 
     amount = db.Column(
         db.Integer,
@@ -91,7 +87,6 @@ class Booking(db.Model):
 
             'client_name': self.client_name,
             'client_phone': self.client_phone,
-        
 
             'service_id': str(self.service_id)
             if self.service_id else None,
@@ -111,7 +106,6 @@ class Booking(db.Model):
                 if self.appointment_time else None
             ),
 
-            
             'amount': self.amount,
             'status': self.status,
             'notes': self.notes,

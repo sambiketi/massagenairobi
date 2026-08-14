@@ -92,20 +92,10 @@ def create_booking():
 
         notes = data.get('notes')
 
-        mpesa_reference = data.get(
-            'mpesa_reference'
-        )
-
         if notes:
 
             notes = str(
                 notes
-            ).strip()
-
-        if mpesa_reference:
-
-            mpesa_reference = str(
-                mpesa_reference
             ).strip()
 
         # ----------------------------------------------------
@@ -247,8 +237,6 @@ def create_booking():
 
             appointment_time=appointment_time,
 
-            mpesa_reference=mpesa_reference,
-
             amount=service.price_kes,
 
             status='Pending',
@@ -306,8 +294,6 @@ def create_booking():
                         booking.appointment_time.strftime(
                             '%H:%M'
                         ),
-
-                
 
                     'service_title':
                         service.title
