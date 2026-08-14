@@ -69,9 +69,7 @@ def create_app(config_name=None):
             # Fallback to timestamp
             version = datetime.utcnow().strftime('%Y%m%d%H%M')
         
-            def static_with_version(filename):
-        from flask import url_for
-        return f"{url_for('static', filename=filename)}?v={version}"
+        def static_with_version(filename):
             return f"{url_for('static', filename=filename)}?v={version}"
         
         return {'static_version': static_with_version, 'static_ver': version}
@@ -105,5 +103,3 @@ def create_app(config_name=None):
 def load_user(user_id):
     from app.models.admin import AdminUser
     return AdminUser.query.get(user_id)
-
-
