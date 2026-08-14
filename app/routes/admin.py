@@ -54,7 +54,6 @@ def logout():
 @login_required
 def dashboard():
     """Admin dashboard"""
-    # Stats
     total_bookings = Booking.query.count()
     pending_bookings = Booking.query.filter_by(status='Pending').count()
     confirmed_bookings = Booking.query.filter_by(status='Confirmed').count()
@@ -71,7 +70,6 @@ def dashboard():
     total_therapists = Therapist.query.count()
     total_services = Service.query.filter_by(is_active=True).count()
     
-    # Chart data
     chart_data = []
     for i in range(6, -1, -1):
         date = datetime.utcnow() - timedelta(days=i)
@@ -106,7 +104,6 @@ def dashboard():
 @admin_bp.route('/therapists')
 @login_required
 def therapists():
-    """Therapists management page"""
     therapists = Therapist.query.order_by(Therapist.name).all()
     return render_template('admin/therapists.html', therapists=therapists)
 
@@ -135,17 +132,12 @@ def create_therapist():
                 result = UploadService.upload_image(file, 'therapists', resize=(400, 400))
                 if result.get('success'):
                     therapist.photo_url = result.get('url')
-                    current_app.logger.info(f"✅ Photo uploaded for {name}: {therapist.photo_url}")
-                else:
-                    current_app.logger.error(f"❌ Photo upload failed for {name}: {result.get('error')}")
-                    return jsonify({'success': False, 'error': f'Photo upload failed: {result.get("error")}'}), 400
         
         db.session.add(therapist)
         db.session.commit()
         return jsonify({'success': True, 'therapist': therapist.to_dict()})
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Create therapist error: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @admin_bp.route('/api/therapist/<therapist_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -178,24 +170,17 @@ def therapist_operations(therapist_id):
                     result = UploadService.upload_image(file, 'therapists', resize=(400, 400))
                     if result.get('success'):
                         therapist.photo_url = result.get('url')
-                        # Delete old image if it exists and is different
                         if old_url and old_url != therapist.photo_url:
                             UploadService.delete_file(old_url)
-                        current_app.logger.info(f"✅ Photo updated for {therapist.name}: {therapist.photo_url}")
-                    else:
-                        current_app.logger.error(f"❌ Photo upload failed for {therapist.name}: {result.get('error')}")
-                        return jsonify({'success': False, 'error': f'Photo upload failed: {result.get("error")}'}), 400
             
             db.session.commit()
             return jsonify({'success': True, 'therapist': therapist.to_dict()})
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"Update therapist error: {str(e)}")
             return jsonify({'success': False, 'error': str(e)}), 500
     
     elif request.method == 'DELETE':
         try:
-            # Delete photo from storage if exists
             if therapist.photo_url:
                 UploadService.delete_file(therapist.photo_url)
             db.session.delete(therapist)
@@ -240,17 +225,12 @@ def create_service():
                 result = UploadService.upload_image(file, 'services', resize=(800, 600))
                 if result.get('success'):
                     service.image_url = result.get('url')
-                    current_app.logger.info(f"✅ Image uploaded for {title}: {service.image_url}")
-                else:
-                    current_app.logger.error(f"❌ Image upload failed for {title}: {result.get('error')}")
-                    return jsonify({'success': False, 'error': f'Image upload failed: {result.get("error")}'}), 400
         
         db.session.add(service)
         db.session.commit()
         return jsonify({'success': True, 'service': service.to_dict()})
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Create service error: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @admin_bp.route('/api/service/<service_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -288,16 +268,11 @@ def service_operations(service_id):
                         service.image_url = result.get('url')
                         if old_url and old_url != service.image_url:
                             UploadService.delete_file(old_url)
-                        current_app.logger.info(f"✅ Image updated for {service.title}: {service.image_url}")
-                    else:
-                        current_app.logger.error(f"❌ Image upload failed for {service.title}: {result.get('error')}")
-                        return jsonify({'success': False, 'error': f'Image upload failed: {result.get("error")}'}), 400
             
             db.session.commit()
             return jsonify({'success': True, 'service': service.to_dict()})
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"Update service error: {str(e)}")
             return jsonify({'success': False, 'error': str(e)}), 500
     
     elif request.method == 'DELETE':
@@ -410,16 +385,11 @@ def upload_gallery():
                     )
                     db.session.add(gallery_image)
                     uploaded.append(gallery_image.to_dict())
-                    current_app.logger.info(f"✅ Gallery image uploaded: {result.get('url')}")
-                else:
-                    current_app.logger.error(f"❌ Gallery upload failed: {result.get('error')}")
-                    return jsonify({'success': False, 'error': f'Upload failed: {result.get("error")}'}), 400
         
         db.session.commit()
         return jsonify({'success': True, 'images': uploaded})
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Gallery upload error: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @admin_bp.route('/api/gallery/<image_id>', methods=['DELETE'])
@@ -483,17 +453,12 @@ def create_blog_post():
                 result = UploadService.upload_image(file, 'blog', resize=(1200, 630))
                 if result.get('success'):
                     post.image_url = result.get('url')
-                    current_app.logger.info(f"✅ Blog image uploaded for {title}: {post.image_url}")
-                else:
-                    current_app.logger.error(f"❌ Blog image upload failed for {title}: {result.get('error')}")
-                    return jsonify({'success': False, 'error': f'Image upload failed: {result.get("error")}'}), 400
         
         db.session.add(post)
         db.session.commit()
         return jsonify({'success': True, 'post': post.to_dict()})
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f"Create blog error: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @admin_bp.route('/api/blog/<post_id>', methods=['GET', 'PUT', 'DELETE'])
@@ -537,16 +502,11 @@ def blog_operations(post_id):
                         post.image_url = result.get('url')
                         if old_url and old_url != post.image_url:
                             UploadService.delete_file(old_url)
-                        current_app.logger.info(f"✅ Blog image updated for {post.title}: {post.image_url}")
-                    else:
-                        current_app.logger.error(f"❌ Blog image upload failed for {post.title}: {result.get('error')}")
-                        return jsonify({'success': False, 'error': f'Image upload failed: {result.get("error")}'}), 400
             
             db.session.commit()
             return jsonify({'success': True, 'post': post.to_dict()})
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"Update blog error: {str(e)}")
             return jsonify({'success': False, 'error': str(e)}), 500
     
     elif request.method == 'DELETE':
@@ -594,7 +554,6 @@ def update_settings():
             'meta_keywords': request.form.get('meta_keywords'),
         }
         
-        # Remove None values
         data = {k: v for k, v in data.items() if v is not None}
         
         SiteSetting.update_settings(data)
