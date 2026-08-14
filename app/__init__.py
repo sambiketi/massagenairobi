@@ -41,12 +41,12 @@ def create_app(config_name=None):
     cors.init_app(app)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
     
-    # ============ AGGRESSIVE STATIC FILE CACHING ============
+    # ============ STATIC FILE CACHING ============
     @app.after_request
     def add_caching_headers(response):
         # Cache static files aggressively
         if request.path.startswith('/static/'):
-            # CSS, JS, Images - cache for 1 year (31536000 seconds)
+            # CSS, JS, Images - cache for 1 year
             if request.path.endswith(('.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.ico', '.woff', '.woff2', '.ttf')):
                 response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
                 response.headers['Expires'] = (datetime.utcnow() + timedelta(days=365)).strftime('%a, %d %b %Y %H:%M:%S GMT')
@@ -55,24 +55,6 @@ def create_app(config_name=None):
                 response.headers['Cache-Control'] = 'public, max-age=604800'
                 response.headers['Expires'] = (datetime.utcnow() + timedelta(days=7)).strftime('%a, %d %b %Y %H:%M:%S GMT')
         return response
-    
-    # ============ VERSIONED STATIC URLS ============
-    @app.context_processor
-    def inject_static_version():
-        # Use git commit hash or timestamp as version
-        import subprocess
-        try:
-            # Get git commit hash for cache busting
-            version = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'], 
-                                              stderr=subprocess.DEVNULL).decode().strip()
-        except:
-            # Fallback to timestamp
-            version = datetime.utcnow().strftime('%Y%m%d%H%M')
-        
-        def static_with_version(filename):
-            return f"{url_for('static', filename=filename)}?v={version}"
-        
-        return {'static_version': static_with_version, 'static_ver': version}
     
     from app.routes.main import main_bp
     from app.routes.api import api_bp

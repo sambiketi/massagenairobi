@@ -46,9 +46,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     {% endif %}
     
-    <!-- Custom CSS - Versioned -->
-    <link rel="stylesheet" href="{{ static_version('css/main.css') }}">
-    <link rel="stylesheet" href="{{ static_version('css/admin.css') }}">
+    <!-- Custom CSS - NO VERSIONING -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -192,7 +192,7 @@
         }
         document.getElementById('sidebarToggle')?.addEventListener('click', toggleMobileSidebar);
     </script>
-    <script src="{{ static_version('js/admin.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

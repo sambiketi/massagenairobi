@@ -48,10 +48,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     {% endif %}
     
-    <!-- Custom CSS - Versioned for cache busting -->
-    <link rel="stylesheet" href="{{ static_version('css/main.css') }}">
+    <!-- Custom CSS - NO VERSIONING -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     {% if request.path.startswith('/admin') %}
-    <link rel="stylesheet" href="{{ static_version('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     {% endif %}
     {% block extra_css %}{% endblock %}
 </head>
@@ -74,10 +74,10 @@
     {% include 'partials/booking_modal.html' %}
     {% endif %}
     
-    <!-- Scripts - Versioned for cache busting -->
-    <script src="{{ static_version('js/main.js') }}" defer></script>
+    <!-- Scripts - NO VERSIONING -->
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     {% if request.path.startswith('/admin') %}
-    <script src="{{ static_version('js/admin.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}" defer></script>
     {% endif %}
     {% block extra_js %}{% endblock %}
 </body>
