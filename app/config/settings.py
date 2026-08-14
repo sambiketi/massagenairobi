@@ -43,6 +43,7 @@ class Config:
             'keepalives_interval': int(os.environ.get('DB_KEEPALIVE_INTERVAL', 10)),
             'keepalives_count': int(os.environ.get('DB_KEEPALIVE_COUNT', 5)),
         }
+    }
     
     # Supabase Storage (separate from DATABASE_URL)
     SUPABASE_URL = os.environ.get('SUPABASE_URL')
@@ -53,7 +54,6 @@ class Config:
 
     if not SUPABASE_SERVICE_ROLE_KEY:
         raise ValueError("SUPABASE_SERVICE_ROLE_KEY must be set in environment variables for storage")
-}
     
     # Business
     BUSINESS_NAME = os.environ.get('BUSINESS_NAME', 'Sanctuary Massage')
@@ -72,16 +72,18 @@ class Config:
     MAX_CONTENT_LENGTH = int(os.environ.get('MAX_CONTENT_LENGTH', 50 * 1024 * 1024))
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'mp4', 'mov', 'webm'}
 
+
 class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = False
 
+
 class TestingConfig(Config):
     TESTING = True
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
-
