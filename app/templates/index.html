@@ -143,7 +143,6 @@
 
         </div>
 
-
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
             {% for service in services %}
@@ -172,7 +171,6 @@
 
                 {% endif %}
 
-
                 <div class="p-6">
 
                     <div class="flex justify-between items-start mb-3">
@@ -192,7 +190,6 @@
                         {{ service.description }}
                     </p>
                     {% endif %}
-
 
                     <div class="flex items-center justify-between">
 
@@ -276,7 +273,6 @@
 
         </div>
 
-
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
             {% for therapist in therapists[:3] %}
@@ -307,7 +303,6 @@
 
                     {% endif %}
 
-
                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-dark-900 to-transparent p-6">
 
                         <div class="flex items-center justify-between gap-4">
@@ -325,7 +320,6 @@
                                 {% endif %}
 
                             </div>
-
 
                             {% if therapist.is_available %}
 
@@ -355,7 +349,6 @@
 
                 </div>
 
-
                 <div class="p-6">
 
                     {% if therapist.bio %}
@@ -365,7 +358,6 @@
                     </p>
 
                     {% endif %}
-
 
                     {% if therapist.is_available %}
 
@@ -430,7 +422,6 @@
             </p>
 
         </div>
-
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
 
@@ -500,7 +491,6 @@
 
                 </h2>
 
-
                 <div class="space-y-5 text-gray-300">
 
                     <p class="flex items-start space-x-3">
@@ -513,7 +503,6 @@
 
                     </p>
 
-
                     <p class="flex items-start space-x-3">
 
                         <i class="fas fa-phone text-gold-400 text-xl mt-1"></i>
@@ -524,7 +513,6 @@
 
                     </p>
 
-
                     <p class="flex items-start space-x-3">
 
                         <i class="fas fa-envelope text-gold-400 text-xl mt-1"></i>
@@ -534,7 +522,6 @@
                         </span>
 
                     </p>
-
 
                     <p class="flex items-start space-x-3">
 
@@ -550,7 +537,6 @@
 
                 </div>
 
-
                 <div class="mt-8 flex flex-wrap gap-4">
 
                     <a
@@ -562,7 +548,6 @@
                         Call Us
 
                     </a>
-
 
                     <a
                         href="https://wa.me/{{ whatsapp_number|default('254700000000') }}"
@@ -579,7 +564,6 @@
                 </div>
 
             </div>
-
 
             <div class="bg-dark-800 rounded-2xl p-6">
 
@@ -607,42 +591,43 @@
 
 
 <!-- =========================================================
-     BOOKING MODAL
+     COMPACT BOOKING MODAL
 ========================================================= -->
 <div
     id="bookingModal"
     class="fixed inset-0 z-50 hidden">
 
+    <!-- BACKDROP -->
     <div
         class="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onclick="closeBookingModal()">
     </div>
 
+    <!-- MODAL CONTAINER -->
+    <div class="relative min-h-screen flex items-center justify-center p-3 sm:p-4">
 
-    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden max-h-[90vh] overflow-y-auto">
 
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
-
-            <!-- Header -->
-            <div class="bg-dark-900 px-6 py-5 flex justify-between items-center">
+            <!-- HEADER -->
+            <div class="bg-dark-900 px-5 py-4 flex justify-between items-center">
 
                 <div>
 
-                    <h2 class="text-2xl font-bold text-white font-serif">
+                    <h2 class="text-xl font-bold text-white font-serif">
                         Book Your Session
                     </h2>
 
-                    <p class="text-gray-400 text-sm mt-1">
+                    <p class="text-gray-400 text-xs mt-1">
                         Choose your preferred date and time
                     </p>
 
                 </div>
 
-
                 <button
                     type="button"
                     onclick="closeBookingModal()"
-                    class="text-gray-400 hover:text-white text-2xl">
+                    class="text-gray-400 hover:text-white text-lg w-8 h-8 flex items-center justify-center">
 
                     <i class="fas fa-times"></i>
 
@@ -651,17 +636,17 @@
             </div>
 
 
-            <!-- Form -->
+            <!-- FORM -->
             <form
                 id="bookingForm"
-                class="p-6 space-y-5">
+                class="p-5 space-y-3">
 
-                <!-- Name -->
+                <!-- NAME -->
                 <div>
 
                     <label
                         for="bookingName"
-                        class="block text-sm font-semibold text-gray-700 mb-2">
+                        class="block text-xs font-semibold text-gray-700 mb-1">
 
                         Full Name
 
@@ -675,17 +660,17 @@
                         maxlength="100"
                         autocomplete="name"
                         placeholder="Your full name"
-                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
+                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
 
                 </div>
 
 
-                <!-- Phone -->
+                <!-- PHONE -->
                 <div>
 
                     <label
                         for="bookingPhone"
-                        class="block text-sm font-semibold text-gray-700 mb-2">
+                        class="block text-xs font-semibold text-gray-700 mb-1">
 
                         Phone Number
 
@@ -699,19 +684,20 @@
                         maxlength="20"
                         autocomplete="tel"
                         placeholder="07XX XXX XXX"
-                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
+                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
 
                 </div>
 
 
-                <!-- Email -->
+                <!-- EMAIL -->
                 <div>
 
                     <label
                         for="bookingEmail"
-                        class="block text-sm font-semibold text-gray-700 mb-2">
+                        class="block text-xs font-semibold text-gray-700 mb-1">
 
                         Email
+
                         <span class="text-gray-400 font-normal">
                             (optional)
                         </span>
@@ -725,72 +711,77 @@
                         maxlength="100"
                         autocomplete="email"
                         placeholder="you@example.com"
-                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
+                        class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
 
                 </div>
 
 
-                <!-- Date -->
-                <div>
+                <!-- DATE + TIME -->
+                <div class="grid grid-cols-2 gap-3">
 
-                    <label
-                        for="bookingDate"
-                        class="block text-sm font-semibold text-gray-700 mb-2">
+                    <!-- DATE -->
+                    <div>
 
-                        Preferred Date
+                        <label
+                            for="bookingDate"
+                            class="block text-xs font-semibold text-gray-700 mb-1">
 
-                    </label>
+                            Preferred Date
 
-                    <input
-                        type="date"
-                        id="bookingDate"
-                        name="date"
-                        required
-                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
+                        </label>
+
+                        <input
+                            type="date"
+                            id="bookingDate"
+                            name="date"
+                            required
+                            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
+
+                    </div>
+
+
+                    <!-- TIME -->
+                    <div>
+
+                        <label
+                            for="bookingTime"
+                            class="block text-xs font-semibold text-gray-700 mb-1">
+
+                            Preferred Time
+
+                        </label>
+
+                        <input
+                            type="time"
+                            id="bookingTime"
+                            name="time"
+                            required
+                            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm focus:border-gold-500 focus:ring-1 focus:ring-gold-500 outline-none">
+
+                    </div>
 
                 </div>
 
 
-                <!-- Time -->
-                <div>
-
-                    <label
-                        for="bookingTime"
-                        class="block text-sm font-semibold text-gray-700 mb-2">
-
-                        Preferred Time
-
-                    </label>
-
-                    <input
-                        type="time"
-                        id="bookingTime"
-                        name="time"
-                        required
-                        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-gold-500 outline-none">
-
-                </div>
-
-
-                <!-- Error -->
+                <!-- ERROR -->
                 <div
                     id="bookingError"
-                    class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                    class="hidden bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-xs">
                 </div>
 
 
-                <!-- Success -->
+                <!-- SUCCESS -->
                 <div
                     id="bookingSuccess"
-                    class="hidden bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">
+                    class="hidden bg-emerald-50 border border-emerald-200 text-emerald-700 px-3 py-2 rounded-lg text-xs">
                 </div>
 
 
-                <!-- Submit -->
+                <!-- SUBMIT -->
                 <button
                     type="submit"
                     id="bookingSubmit"
-                    class="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 py-4 rounded-xl font-bold hover:shadow-lg hover:shadow-gold-500/20 transition-all">
+                    class="w-full bg-gradient-to-r from-gold-500 to-gold-600 text-dark-900 py-3 rounded-lg font-bold text-sm hover:shadow-lg hover:shadow-gold-500/20 transition-all">
 
                     <i class="fas fa-calendar-check mr-2"></i>
 
@@ -812,15 +803,24 @@
 ========================================================= -->
 <script>
 
-const bookingModal = document.getElementById('bookingModal');
-const bookingForm = document.getElementById('bookingForm');
-const bookingError = document.getElementById('bookingError');
-const bookingSuccess = document.getElementById('bookingSuccess');
-const bookingSubmit = document.getElementById('bookingSubmit');
+const bookingModal =
+    document.getElementById('bookingModal');
+
+const bookingForm =
+    document.getElementById('bookingForm');
+
+const bookingError =
+    document.getElementById('bookingError');
+
+const bookingSuccess =
+    document.getElementById('bookingSuccess');
+
+const bookingSubmit =
+    document.getElementById('bookingSubmit');
 
 
 // ---------------------------------------------------------
-// Open modal
+// OPEN MODAL
 // ---------------------------------------------------------
 function openBookingModal() {
 
@@ -829,16 +829,19 @@ function openBookingModal() {
     document.body.style.overflow = 'hidden';
 
     bookingError.classList.add('hidden');
+
     bookingSuccess.classList.add('hidden');
 
-    const today = new Date().toISOString().split('T')[0];
+    const today =
+        new Date().toISOString().split('T')[0];
 
     document.getElementById('bookingDate').min = today;
+
 }
 
 
 // ---------------------------------------------------------
-// Close modal
+// CLOSE MODAL
 // ---------------------------------------------------------
 function closeBookingModal() {
 
@@ -850,168 +853,210 @@ function closeBookingModal() {
 
 
 // ---------------------------------------------------------
-// Submit booking
+// SUBMIT BOOKING
 // ---------------------------------------------------------
-bookingForm.addEventListener('submit', async function(event) {
+bookingForm.addEventListener(
+    'submit',
+    async function(event) {
 
-    event.preventDefault();
+        event.preventDefault();
 
-    bookingError.classList.add('hidden');
-    bookingSuccess.classList.add('hidden');
+        bookingError.classList.add('hidden');
 
-
-    const data = {
-
-        name: document.getElementById('bookingName').value.trim(),
-
-        phone: document.getElementById('bookingPhone').value.trim(),
-
-        email: document.getElementById('bookingEmail').value.trim(),
-
-        date: document.getElementById('bookingDate').value,
-
-        time: document.getElementById('bookingTime').value
-
-    };
+        bookingSuccess.classList.add('hidden');
 
 
-    // Basic validation
-    if (
-        !data.name ||
-        !data.phone ||
-        !data.date ||
-        !data.time
-    ) {
+        const data = {
 
-        bookingError.textContent =
-            'Please complete all required fields.';
+            name:
+                document
+                    .getElementById('bookingName')
+                    .value
+                    .trim(),
 
-        bookingError.classList.remove('hidden');
+            phone:
+                document
+                    .getElementById('bookingPhone')
+                    .value
+                    .trim(),
 
-        return;
+            email:
+                document
+                    .getElementById('bookingEmail')
+                    .value
+                    .trim(),
 
-    }
+            date:
+                document
+                    .getElementById('bookingDate')
+                    .value,
 
+            time:
+                document
+                    .getElementById('bookingTime')
+                    .value
 
-    // Disable button
-    bookingSubmit.disabled = true;
-
-    bookingSubmit.innerHTML =
-        '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
-
-
-    try {
-
-        const response = await fetch('/api/book', {
-
-            method: 'POST',
-
-            headers: {
-                'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify(data)
-
-        });
+        };
 
 
-        const result = await response.json();
+        // BASIC VALIDATION
+        if (
+            !data.name ||
+            !data.phone ||
+            !data.date ||
+            !data.time
+        ) {
 
+            bookingError.textContent =
+                'Please complete all required fields.';
 
-        if (!response.ok || !result.success) {
+            bookingError.classList.remove('hidden');
 
-            throw new Error(
-                result.error || 'Unable to create booking.'
-            );
+            return;
 
         }
 
 
-        // Success
-        bookingSuccess.innerHTML = `
-            <strong>Booking request submitted!</strong>
-            <br>
-            We have received your preferred date and time.
-        `;
-
-        bookingSuccess.classList.remove('hidden');
-
-
-        // Reset form
-        bookingForm.reset();
-
-
-        // WhatsApp confirmation
-        if (result.whatsapp_url) {
-
-            setTimeout(() => {
-
-                window.location.href = result.whatsapp_url;
-
-            }, 1200);
-
-        }
-
-
-    } catch (error) {
-
-        console.error('Booking error:', error);
-
-
-        bookingError.textContent =
-            error.message ||
-            'Something went wrong. Please try again.';
-
-        bookingError.classList.remove('hidden');
-
-
-    } finally {
-
-        bookingSubmit.disabled = false;
+        // DISABLE BUTTON
+        bookingSubmit.disabled = true;
 
         bookingSubmit.innerHTML =
-            '<i class="fas fa-calendar-check mr-2"></i>Submit Booking';
+            '<i class="fas fa-spinner fa-spin mr-2"></i>Submitting...';
+
+
+        try {
+
+            const response =
+                await fetch('/api/book', {
+
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body:
+                        JSON.stringify(data)
+
+                });
+
+
+            const result =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !result.success
+            ) {
+
+                throw new Error(
+                    result.error ||
+                    'Unable to create booking.'
+                );
+
+            }
+
+
+            // SUCCESS
+            bookingSuccess.innerHTML = `
+                <strong>Booking request submitted!</strong>
+                <br>
+                We have received your preferred date and time.
+            `;
+
+            bookingSuccess.classList.remove('hidden');
+
+
+            // RESET FORM
+            bookingForm.reset();
+
+
+            // WHATSAPP CONFIRMATION
+            if (result.whatsapp_url) {
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        result.whatsapp_url;
+
+                }, 1200);
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                'Booking error:',
+                error
+            );
+
+
+            bookingError.textContent =
+                error.message ||
+                'Something went wrong. Please try again.';
+
+            bookingError.classList.remove('hidden');
+
+
+        } finally {
+
+            bookingSubmit.disabled = false;
+
+            bookingSubmit.innerHTML =
+                '<i class="fas fa-calendar-check mr-2"></i>Submit Booking';
+
+        }
 
     }
-
-});
+);
 
 
 // ---------------------------------------------------------
-// Escape key closes modal
+// ESCAPE KEY
 // ---------------------------------------------------------
-document.addEventListener('keydown', function(event) {
+document.addEventListener(
+    'keydown',
+    function(event) {
 
-    if (
-        event.key === 'Escape' &&
-        !bookingModal.classList.contains('hidden')
-    ) {
+        if (
+            event.key === 'Escape' &&
+            !bookingModal.classList.contains('hidden')
+        ) {
 
-        closeBookingModal();
+            closeBookingModal();
+
+        }
 
     }
-
-});
+);
 
 
 // ---------------------------------------------------------
-// Prevent past dates
+// PREVENT PAST DATES
 // ---------------------------------------------------------
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener(
+    'DOMContentLoaded',
+    function() {
 
-    const dateInput =
-        document.getElementById('bookingDate');
+        const dateInput =
+            document.getElementById('bookingDate');
 
-    if (dateInput) {
+        if (dateInput) {
 
-        const today =
-            new Date().toISOString().split('T')[0];
+            const today =
+                new Date()
+                    .toISOString()
+                    .split('T')[0];
 
-        dateInput.min = today;
+            dateInput.min = today;
+
+        }
 
     }
-
-});
+);
 
 </script>
 
