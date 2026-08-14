@@ -1,25 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Massage Therapists Nairobi West{% endblock %}</title>
     
-    <!-- Preconnect for faster CDN loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     
-    <!-- Critical CSS inline (above the fold) -->
     <style>
-        /* Critical styles to prevent flash */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: 'Inter', sans-serif; background-color: #f7f7f7; color: #1a1a1a; padding-top: 80px; }
         :root { --gold-50: #fdf8f0; --gold-500: #d4892e; --gold-600: #b87424; }
         .hidden { display: none !important; }
     </style>
     
-    <!-- Tailwind CSS - Load async -->
     <script src="https://cdn.tailwindcss.com" defer></script>
     <script>
         tailwind.config = {
@@ -35,20 +31,16 @@
         }
     </script>
     
-    <!-- Font Awesome - Load async with fallback -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
     
-    <!-- Google Fonts - Load async -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Great+Vibes&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Chart.js - Only load on admin pages -->
     {% if request.path.startswith('/admin') %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     {% endif %}
     
-    <!-- Custom CSS - NO VERSIONING -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     {% if request.path.startswith('/admin') %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
@@ -56,25 +48,17 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation -->
     {% include 'partials/navbar.html' %}
-    
-    <!-- Main Content -->
     <main>
         {% block content %}{% endblock %}
     </main>
-    
-    <!-- Footer -->
     {% if not request.path.startswith('/admin') %}
     {% include 'partials/footer.html' %}
     {% endif %}
-    
-    <!-- Booking Modal (only on public pages) -->
     {% if not request.path.startswith('/admin') %}
     {% include 'partials/booking_modal.html' %}
     {% endif %}
     
-    <!-- Scripts - NO VERSIONING -->
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     {% if request.path.startswith('/admin') %}
     <script src="{{ url_for('static', filename='js/admin.js') }}" defer></script>
