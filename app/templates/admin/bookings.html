@@ -1,706 +1,634 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
 
-{% block title %}Manage Bookings - Admin{% endblock %}
+{% block title %}Bookings{% endblock %}
 
 {% block content %}
 
-<div class="min-h-screen bg-dark-50">
+<div class="space-y-6">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-        <!-- HEADER -->
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">
+                Bookings
+            </h1>
+
+            <p class="text-sm text-gray-500 mt-1">
+                Manage appointments and customer bookings.
+            </p>
+        </div>
+
+        <a
+            href="{{ url_for('admin.bookings') }}"
+            class="inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+
+            <i class="fas fa-sync-alt"></i>
+            Refresh
+
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         STATISTICS
+    ====================================================== -->
+
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+
+        <!-- TOTAL -->
+
+        <div class="bg-white border rounded-xl p-5 shadow-sm">
+
+            <p class="text-sm text-gray-500">
+                Total
+            </p>
+
+            <p class="text-2xl font-bold text-gray-900 mt-1">
+                {{ stats.total }}
+            </p>
+
+        </div>
+
+
+        <!-- PENDING -->
+
+        <div class="bg-white border rounded-xl p-5 shadow-sm">
+
+            <p class="text-sm text-yellow-600 font-medium">
+                Pending
+            </p>
+
+            <p class="text-2xl font-bold text-yellow-600 mt-1">
+                {{ stats.pending }}
+            </p>
+
+        </div>
+
+
+        <!-- CONFIRMED -->
+
+        <div class="bg-white border rounded-xl p-5 shadow-sm">
+
+            <p class="text-sm text-blue-600 font-medium">
+                Confirmed
+            </p>
+
+            <p class="text-2xl font-bold text-blue-600 mt-1">
+                {{ stats.confirmed }}
+            </p>
+
+        </div>
+
+
+        <!-- COMPLETED -->
+
+        <div class="bg-white border rounded-xl p-5 shadow-sm">
+
+            <p class="text-sm text-green-600 font-medium">
+                Completed
+            </p>
+
+            <p class="text-2xl font-bold text-green-600 mt-1">
+                {{ stats.completed }}
+            </p>
+
+        </div>
+
+
+        <!-- CANCELLED -->
+
+        <div class="bg-white border rounded-xl p-5 shadow-sm">
+
+            <p class="text-sm text-red-600 font-medium">
+                Cancelled
+            </p>
+
+            <p class="text-2xl font-bold text-red-600 mt-1">
+                {{ stats.cancelled }}
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTERS
+    ====================================================== -->
+
+    <div class="bg-white border rounded-xl p-5 shadow-sm">
+
+        <form
+            method="GET"
+            action="{{ url_for('admin.bookings') }}"
+            class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <!-- STATUS -->
 
             <div>
-                <h1 class="text-3xl font-bold text-dark-900">
-                    Bookings
-                </h1>
 
-                <p class="text-gray-600 mt-1">
-                    View and manage client appointments
-                </p>
-            </div>
-
-            <!-- FILTER -->
-            <form method="GET" action="{{ url_for('admin.bookings') }}"
-                  class="flex flex-col sm:flex-row gap-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Status
+                </label>
 
                 <select
                     name="status"
-                    onchange="this.form.submit()"
-                    class="px-4 py-2 rounded-xl border-2 border-gray-200
-                           bg-white outline-none focus:border-gold-400">
+                    class="w-full rounded-lg border-gray-300 focus:border-gray-500 focus:ring-gray-500">
 
-                    <option value="">All Status</option>
+                    <option value="">
+                        All bookings
+                    </option>
 
-                    <option value="Pending"
+                    <option
+                        value="Pending"
                         {% if request.args.get('status') == 'Pending' %}
-                            selected
+                        selected
                         {% endif %}>
                         Pending
                     </option>
 
-                    <option value="Confirmed"
+                    <option
+                        value="Confirmed"
                         {% if request.args.get('status') == 'Confirmed' %}
-                            selected
+                        selected
                         {% endif %}>
                         Confirmed
                     </option>
 
-                    <option value="Completed"
+                    <option
+                        value="Completed"
                         {% if request.args.get('status') == 'Completed' %}
-                            selected
+                        selected
                         {% endif %}>
                         Completed
                     </option>
 
-                    <option value="Cancelled"
+                    <option
+                        value="Cancelled"
                         {% if request.args.get('status') == 'Cancelled' %}
-                            selected
+                        selected
                         {% endif %}>
                         Cancelled
                     </option>
 
                 </select>
 
-            </form>
-
-        </div>
-
-
-        <!-- STATISTICS -->
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-
-            <div class="bg-white rounded-2xl p-5 shadow-sm">
-                <p class="text-sm text-gray-500">
-                    Total
-                </p>
-
-                <p class="text-3xl font-bold text-dark-900 mt-1">
-                    {{ stats.total|default(0) }}
-                </p>
             </div>
 
 
-            <div class="bg-white rounded-2xl p-5 shadow-sm">
-                <p class="text-sm text-gray-500">
-                    Pending
-                </p>
+            <!-- DATE -->
 
-                <p class="text-3xl font-bold text-yellow-600 mt-1">
-                    {{ stats.pending|default(0) }}
-                </p>
-            </div>
+            <div>
 
-
-            <div class="bg-white rounded-2xl p-5 shadow-sm">
-                <p class="text-sm text-gray-500">
-                    Confirmed
-                </p>
-
-                <p class="text-3xl font-bold text-emerald-600 mt-1">
-                    {{ stats.confirmed|default(0) }}
-                </p>
-            </div>
-
-
-            <div class="bg-white rounded-2xl p-5 shadow-sm">
-                <p class="text-sm text-gray-500">
-                    Completed
-                </p>
-
-                <p class="text-3xl font-bold text-blue-600 mt-1">
-                    {{ stats.completed|default(0) }}
-                </p>
-            </div>
-
-        </div>
-
-
-        <!-- BOOKINGS TABLE -->
-
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-
-            <div class="px-6 py-4 border-b border-gray-100">
-
-                <h2 class="font-semibold text-dark-900">
-                    Client Appointments
-                </h2>
-
-            </div>
-
-
-            <div class="overflow-x-auto">
-
-                <table class="data-table w-full">
-
-                    <thead>
-
-                        <tr>
-                            <th>Client</th>
-                            <th>Phone</th>
-                            <th>Service</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        {% for booking in bookings %}
-
-                        <tr>
-
-                            <!-- CLIENT -->
-
-                            <td>
-
-                                <div>
-                                    <p class="font-semibold text-dark-900">
-                                        {{ booking.client_name }}
-                                    </p>
-
-                                    {% if booking.client_email %}
-                                    <p class="text-xs text-gray-500 mt-1">
-                                        {{ booking.client_email }}
-                                    </p>
-                                    {% endif %}
-                                </div>
-
-                            </td>
-
-
-                            <!-- PHONE -->
-
-                            <td>
-
-                                <a
-                                    href="tel:{{ booking.client_phone }}"
-                                    class="text-gray-600 hover:text-gold-600">
-
-                                    {{ booking.client_phone }}
-
-                                </a>
-
-                            </td>
-
-
-                            <!-- SERVICE -->
-
-                            <td>
-
-                                {% if booking.service %}
-
-                                <div>
-
-                                    <p class="font-medium text-dark-900">
-                                        {{ booking.service.title }}
-                                    </p>
-
-                                    <p class="text-xs text-gray-500">
-                                        {{ booking.service.duration_minutes }} min
-                                    </p>
-
-                                </div>
-
-                                {% else %}
-
-                                <span class="text-gray-400">
-                                    No service
-                                </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <!-- DATE -->
-
-                            <td>
-
-                                <span class="font-medium">
-                                    {{ booking.appointment_date }}
-                                </span>
-
-                            </td>
-
-
-                            <!-- TIME -->
-
-                            <td>
-
-                                <span class="text-gray-600">
-                                    {{ booking.appointment_time.strftime('%H:%M')
-                                       if booking.appointment_time
-                                       else '-' }}
-                                </span>
-
-                            </td>
-
-
-                            <!-- AMOUNT -->
-
-                            <td>
-
-                                <span class="font-semibold text-dark-900">
-
-                                    KES
-                                    {{ "{:,.0f}".format(
-                                        booking.amount|default(0)
-                                    ) }}
-
-                                </span>
-
-                            </td>
-
-
-                            <!-- STATUS -->
-
-                            <td>
-
-                                {% if booking.status == 'Confirmed' %}
-
-                                <span class="badge badge-success">
-                                    Confirmed
-                                </span>
-
-                                {% elif booking.status == 'Pending' %}
-
-                                <span class="badge badge-warning">
-                                    Pending
-                                </span>
-
-                                {% elif booking.status == 'Completed' %}
-
-                                <span class="badge badge-info">
-                                    Completed
-                                </span>
-
-                                {% elif booking.status == 'Cancelled' %}
-
-                                <span class="badge badge-danger">
-                                    Cancelled
-                                </span>
-
-                                {% else %}
-
-                                <span class="badge badge-warning">
-                                    {{ booking.status }}
-                                </span>
-
-                                {% endif %}
-
-                            </td>
-
-
-                            <!-- ACTIONS -->
-
-                            <td>
-
-                                <div class="flex items-center gap-3">
-
-                                    <button
-                                        type="button"
-                                        onclick="editBooking('{{ booking.id }}')"
-                                        class="text-gold-600 hover:text-gold-800"
-                                        title="Edit">
-
-                                        <i class="fas fa-edit"></i>
-
-                                    </button>
-
-
-                                    {% if booking.status == 'Pending' %}
-
-                                    <button
-                                        type="button"
-                                        onclick="confirmBooking('{{ booking.id }}')"
-                                        class="text-emerald-600 hover:text-emerald-800"
-                                        title="Confirm">
-
-                                        <i class="fas fa-check-circle"></i>
-
-                                    </button>
-
-                                    {% endif %}
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-
-                        {% else %}
-
-                        <tr>
-
-                            <td
-                                colspan="8"
-                                class="text-center py-16">
-
-                                <div class="flex flex-col items-center">
-
-                                    <i
-                                        class="fas fa-calendar-xmark
-                                               text-5xl text-gray-300 mb-4">
-                                    </i>
-
-                                    <h3 class="font-semibold text-gray-700">
-                                        No bookings yet
-                                    </h3>
-
-                                    <p class="text-sm text-gray-500 mt-1">
-                                        New client appointments will appear here.
-                                    </p>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ========================================================= -->
-<!-- EDIT BOOKING MODAL -->
-<!-- ========================================================= -->
-
-<div
-    id="bookingModal"
-    class="fixed inset-0 z-50 hidden">
-
-    <div
-        class="absolute inset-0 bg-black/50"
-        onclick="closeBookingModal()">
-    </div>
-
-
-    <div class="relative min-h-screen flex items-center justify-center p-4">
-
-        <div
-            class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
-
-            <!-- HEADER -->
-
-            <div
-                class="flex items-center justify-between
-                       px-6 py-5 border-b border-gray-100">
-
-                <h3 class="text-xl font-bold text-dark-900">
-                    Update Booking
-                </h3>
-
-                <button
-                    type="button"
-                    onclick="closeBookingModal()"
-                    class="text-gray-400 hover:text-dark-900 text-xl">
-
-                    <i class="fas fa-times"></i>
-
-                </button>
-
-            </div>
-
-
-            <!-- FORM -->
-
-            <form id="bookingForm" class="p-6">
-
-                <input
-                    type="hidden"
-                    id="editBookingId">
-
-
-                <label
-                    class="block text-sm font-medium text-gray-700 mb-2">
-
-                    Booking Status
-
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                    Appointment Date
                 </label>
 
+                <input
+                    type="date"
+                    name="date"
+                    value="{{ request.args.get('date', '') }}"
+                    class="w-full rounded-lg border-gray-300 focus:border-gray-500 focus:ring-gray-500">
 
-                <select
-                    id="editBookingStatus"
-                    class="w-full px-4 py-3 rounded-xl
-                           border-2 border-gray-200
-                           focus:border-gold-400
-                           outline-none">
+            </div>
 
-                    <option value="Pending">
-                        Pending
-                    </option>
 
-                    <option value="Confirmed">
-                        Confirmed
-                    </option>
+            <!-- BUTTON -->
 
-                    <option value="Completed">
-                        Completed
-                    </option>
-
-                    <option value="Cancelled">
-                        Cancelled
-                    </option>
-
-                </select>
-
+            <div class="flex items-end gap-2">
 
                 <button
                     type="submit"
-                    class="w-full mt-5
-                           bg-gradient-to-r
-                           from-gold-500 to-gold-600
-                           text-dark-900
-                           py-3 rounded-xl
-                           font-semibold
-                           hover:shadow-lg
-                           transition-all">
+                    class="flex-1 bg-gray-900 hover:bg-gray-800 text-white px-4 py-2.5 rounded-lg font-semibold">
 
-                    <i class="fas fa-save mr-2"></i>
-                    Save Changes
+                    <i class="fas fa-filter mr-2"></i>
+                    Filter
 
                 </button>
 
-            </form>
+                <a
+                    href="{{ url_for('admin.bookings') }}"
+                    class="px-4 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+
+                    Clear
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         BOOKINGS
+    ====================================================== -->
+
+    <div class="bg-white border rounded-xl shadow-sm overflow-hidden">
+
+        <div class="px-5 py-4 border-b flex items-center justify-between">
+
+            <div>
+
+                <h2 class="font-bold text-gray-900">
+                    Appointment Records
+                </h2>
+
+                <p class="text-xs text-gray-500 mt-1">
+                    {{ bookings|length }} booking{% if bookings|length != 1 %}s{% endif %}
+                </p>
+
+            </div>
 
         </div>
+
+
+        {% if bookings %}
+
+        <div class="divide-y">
+
+            {% for booking in bookings %}
+
+            <div
+                class="p-5 hover:bg-gray-50 transition"
+                id="booking-{{ booking.id }}">
+
+                <div class="flex flex-col xl:flex-row xl:items-center gap-5">
+
+
+                    <!-- =================================================
+                         CUSTOMER
+                    ================================================== -->
+
+                    <div class="flex items-start gap-4 flex-1 min-w-0">
+
+                        <div
+                            class="w-11 h-11 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+
+                            <i class="fas fa-user text-gray-500"></i>
+
+                        </div>
+
+                        <div class="min-w-0">
+
+                            <h3 class="font-bold text-gray-900 truncate">
+                                {{ booking.client_name }}
+                            </h3>
+
+                            <a
+                                href="tel:{{ booking.client_phone }}"
+                                class="text-sm text-gray-500 hover:text-gray-900">
+
+                                <i class="fas fa-phone mr-1"></i>
+                                {{ booking.client_phone }}
+
+                            </a>
+
+                            {% if booking.notes %}
+
+                            <p class="text-xs text-gray-400 mt-2">
+                                <i class="fas fa-sticky-note mr-1"></i>
+                                {{ booking.notes }}
+                            </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         APPOINTMENT
+                    ================================================== -->
+
+                    <div class="flex-1">
+
+                        <p class="text-xs text-gray-400 uppercase tracking-wide">
+                            Appointment
+                        </p>
+
+                        <p class="font-semibold text-gray-900 mt-1">
+
+                            <i class="far fa-calendar mr-1"></i>
+
+                            {{ booking.appointment_date.strftime('%d %b %Y') }}
+
+                        </p>
+
+                        <p class="text-sm text-gray-500">
+
+                            <i class="far fa-clock mr-1"></i>
+
+                            {{ booking.appointment_time.strftime('%H:%M') }}
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         SERVICE
+                    ================================================== -->
+
+                    <div class="flex-1">
+
+                        <p class="text-xs text-gray-400 uppercase tracking-wide">
+                            Service
+                        </p>
+
+                        <p class="font-semibold text-gray-900 mt-1">
+
+                            {% if booking.service %}
+
+                                {{ booking.service.title }}
+
+                            {% else %}
+
+                                Service unavailable
+
+                            {% endif %}
+
+                        </p>
+
+                        <p class="text-sm text-gray-500">
+
+                            KES {{ "{:,.0f}".format(booking.amount or 0) }}
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         STATUS
+                    ================================================== -->
+
+                    <div class="flex-shrink-0">
+
+                        {% if booking.status == 'Pending' %}
+
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-yellow-100 text-yellow-700 text-xs font-semibold">
+
+                            <i class="fas fa-clock"></i>
+                            Pending
+
+                        </span>
+
+                        {% elif booking.status == 'Confirmed' %}
+
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">
+
+                            <i class="fas fa-check-circle"></i>
+                            Confirmed
+
+                        </span>
+
+                        {% elif booking.status == 'Completed' %}
+
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 text-green-700 text-xs font-semibold">
+
+                            <i class="fas fa-check-double"></i>
+                            Completed
+
+                        </span>
+
+                        {% elif booking.status == 'Cancelled' %}
+
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-100 text-red-700 text-xs font-semibold">
+
+                            <i class="fas fa-times-circle"></i>
+                            Cancelled
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-xs font-semibold">
+
+                            {{ booking.status }}
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ACTIONS
+                    ================================================== -->
+
+                    <div class="flex flex-wrap gap-2 flex-shrink-0">
+
+                        {% if booking.status == 'Pending' %}
+
+                        <button
+                            type="button"
+                            onclick="updateBookingStatus('{{ booking.id }}', 'Confirmed')"
+                            class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold">
+
+                            <i class="fas fa-check mr-1"></i>
+                            Confirm
+
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="updateBookingStatus('{{ booking.id }}', 'Cancelled')"
+                            class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-xs font-semibold">
+
+                            Cancel
+
+                        </button>
+
+                        {% elif booking.status == 'Confirmed' %}
+
+                        <button
+                            type="button"
+                            onclick="updateBookingStatus('{{ booking.id }}', 'Completed')"
+                            class="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold">
+
+                            <i class="fas fa-check-double mr-1"></i>
+                            Mark Done
+
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="updateBookingStatus('{{ booking.id }}', 'Cancelled')"
+                            class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg text-xs font-semibold">
+
+                            Cancel
+
+                        </button>
+
+                        {% elif booking.status == 'Completed' %}
+
+                        <span class="text-xs text-green-600 font-medium px-2 py-2">
+
+                            <i class="fas fa-check-double mr-1"></i>
+                            Appointment completed
+
+                        </span>
+
+                        {% elif booking.status == 'Cancelled' %}
+
+                        <span class="text-xs text-red-500 font-medium px-2 py-2">
+
+                            <i class="fas fa-ban mr-1"></i>
+                            Cancelled
+
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     MPESA
+                ================================================== -->
+
+                {% if booking.mpesa_reference %}
+
+                <div class="mt-4 ml-0 xl:ml-15 text-xs text-gray-500">
+
+                    <i class="fas fa-money-bill-wave mr-1 text-green-600"></i>
+
+                    M-Pesa Reference:
+
+                    <strong class="text-gray-700">
+                        {{ booking.mpesa_reference }}
+                    </strong>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        {% else %}
+
+        <!-- =====================================================
+             EMPTY STATE
+        ====================================================== -->
+
+        <div class="py-16 text-center">
+
+            <div
+                class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+
+                <i class="fas fa-calendar-times text-2xl text-gray-400"></i>
+
+            </div>
+
+            <h3 class="font-semibold text-gray-900">
+                No bookings found
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-1">
+                There are no bookings matching your current filters.
+            </p>
+
+        </div>
+
+        {% endif %}
 
     </div>
 
 </div>
 
 
+<!-- =========================================================
+     BOOKING STATUS JAVASCRIPT
+========================================================= -->
+
 <script>
 
-let currentBookingId = null;
+async function updateBookingStatus(bookingId, status) {
 
-const modal =
-    document.getElementById('bookingModal');
+    const labels = {
+        'Confirmed': 'confirm this booking',
+        'Completed': 'mark this appointment as completed',
+        'Cancelled': 'cancel this booking'
+    };
 
+    const message =
+        labels[status] ||
+        `change this booking to ${status}`;
 
-// ============================================================
-// EDIT
-// ============================================================
-
-async function editBooking(id) {
-
-    currentBookingId = id;
-
-    try {
-
-        const response =
-            await fetch('/admin/api/booking/' + id);
-
-        const result =
-            await response.json();
-
-        if (!response.ok) {
-
-            throw new Error(
-                result.error || 'Unable to load booking'
-            );
-
-        }
-
-        /*
-         * Support either:
-         *
-         * { id, status }
-         *
-         * OR
-         *
-         * { success: true, booking: {...} }
-         */
-
-        const booking =
-            result.booking || result;
-
-        document.getElementById(
-            'editBookingId'
-        ).value = booking.id;
-
-        document.getElementById(
-            'editBookingStatus'
-        ).value = booking.status;
-
-        modal.classList.remove('hidden');
-
-        document.body.style.overflow = 'hidden';
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            'Unable to load booking. Please try again.'
-        );
-
-    }
-}
-
-
-// ============================================================
-// CLOSE
-// ============================================================
-
-function closeBookingModal() {
-
-    modal.classList.add('hidden');
-
-    document.body.style.overflow = '';
-
-    currentBookingId = null;
-}
-
-
-// ============================================================
-// CONFIRM
-// ============================================================
-
-async function confirmBooking(id) {
-
-    if (!confirm('Confirm this booking?')) {
+    if (!confirm(`Are you sure you want to ${message}?`)) {
         return;
     }
 
     try {
 
-        const response =
-            await fetch(
-                '/admin/api/booking/' +
-                id +
-                '/confirm',
-                {
-                    method: 'PUT'
-                }
-            );
+        const response = await fetch(
+            `/api/booking/${bookingId}`,
+            {
+                method: 'PUT',
 
-        const result =
-            await response.json();
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    status: status
+                })
+            }
+        );
+
+        const result = await response.json();
 
         if (!response.ok || !result.success) {
 
             throw new Error(
                 result.error ||
-                'Unable to confirm booking'
+                'Unable to update booking'
             );
 
         }
+
+        /*
+         * Reload the page so:
+         *
+         * - status badge changes
+         * - statistics update
+         * - completed bookings move into Completed
+         * - cancelled bookings move into Cancelled
+         */
 
         window.location.reload();
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            'Booking status update failed:',
+            error
+        );
 
-        alert(error.message);
+        alert(
+            error.message ||
+            'Unable to update booking.'
+        );
 
     }
+
 }
-
-
-// ============================================================
-// UPDATE
-// ============================================================
-
-document
-    .getElementById('bookingForm')
-    .addEventListener('submit', async function(event) {
-
-        event.preventDefault();
-
-        if (!currentBookingId) {
-            return;
-        }
-
-        const status =
-            document.getElementById(
-                'editBookingStatus'
-            ).value;
-
-        try {
-
-            const response =
-                await fetch(
-                    '/admin/api/booking/' +
-                    currentBookingId,
-                    {
-                        method: 'PUT',
-
-                        headers: {
-                            'Content-Type':
-                                'application/json'
-                        },
-
-                        body: JSON.stringify({
-                            status: status
-                        })
-                    }
-                );
-
-            const result =
-                await response.json();
-
-            if (!response.ok || !result.success) {
-
-                throw new Error(
-                    result.error ||
-                    'Unable to update booking'
-                );
-
-            }
-
-            closeBookingModal();
-
-            window.location.reload();
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert(error.message);
-
-        }
-
-    });
-
-
-// ============================================================
-// ESCAPE KEY
-// ============================================================
-
-document.addEventListener('keydown', function(event) {
-
-    if (
-        event.key === 'Escape' &&
-        !modal.classList.contains('hidden')
-    ) {
-
-        closeBookingModal();
-
-    }
-
-});
 
 </script>
 
