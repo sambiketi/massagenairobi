@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Blog - {{ business_name }}{% endblock %}
+
+{% block content %}
+<section class="py-24 bg-dark-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-5xl font-bold text-dark-900 mb-4">
+                Our <span class="text-gold-600">Blog</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Insights, tips, and stories from our wellness experts
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for post in posts %}
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                {% if post.image_url %}
+                <div class="h-56 overflow-hidden">
+                    <img src="{{ post.image_url }}" alt="{{ post.title }}" 
+                         class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                         loading="lazy">
+                </div>
+                {% else %}
+                <div class="h-56 bg-gradient-to-br from-gold-100 to-gold-300 flex items-center justify-center">
+                    <i class="fas fa-newspaper text-6xl text-gold-600"></i>
+                </div>
+                {% endif %}
+                <div class="p-6">
+                    <div class="text-sm text-gold-500 mb-2">
+                        {{ post.created_at.strftime('%B %d, %Y') }}
+                    </div>
+                    <h2 class="text-xl font-bold text-dark-900 mb-3 font-serif">
+                        <a href="{{ url_for('main.blog_post', slug=post.slug) }}" class="hover:text-gold-600 transition-colors">
+                            {{ post.title }}
+                        </a>
+                    </h2>
+                    <p class="text-gray-600 mb-4">{{ post.excerpt or post.content|truncate(120) }}</p>
+                    <a href="{{ url_for('main.blog_post', slug=post.slug) }}" 
+                       class="text-gold-600 hover:text-gold-700 font-semibold transition-colors inline-flex items-center">
+                        Read More <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-3 text-center py-12">
+                <p class="text-gray-500 text-lg">No blog posts available yet. Check back soon!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

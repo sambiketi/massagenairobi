@@ -1,10 +1,11 @@
-﻿import os
+import os
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime, timedelta
 from sqlalchemy import func, desc
 from app import db
-from app.models import Therapist, Service, Booking, GalleryImage, SiteSetting
+from app.models import Therapist, Service, Booking, GalleryImage, BlogPost
+from app.models.settings import SiteSetting  
 from app.models.admin import AdminUser
 from app.services.upload_service import UploadService
 
@@ -14,15 +15,16 @@ admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    """Admin login page"""
     if current_user.is_authenticated:
         return redirect(url_for('admin.dashboard'))
     
     if request.method == 'POST':
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = request.form.get('username')
+        password = request.form.get('password')
         
         if not username or not password:
-            flash('Username and password are required', 'danger')
+            flash('Email and password are required', 'danger')
             return render_template('admin/login.html')
         
         user = AdminUser.query.filter_by(username=username).first()
@@ -35,7 +37,7 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('admin.dashboard'))
         else:
-            flash("Invalid username or password", 'danger')
+            flash('Invalid username or password', 'danger')
     
     return render_template('admin/login.html')
 
@@ -51,6 +53,8 @@ def logout():
 @admin_bp.route('/')
 @login_required
 def dashboard():
+    """Admin dashboard"""
+    # Stats
     total_bookings = Booking.query.count()
     pending_bookings = Booking.query.filter_by(status='Pending').count()
     confirmed_bookings = Booking.query.filter_by(status='Confirmed').count()
@@ -67,6 +71,7 @@ def dashboard():
     total_therapists = Therapist.query.count()
     total_services = Service.query.filter_by(is_active=True).count()
     
+    # Chart data
     chart_data = []
     for i in range(6, -1, -1):
         date = datetime.utcnow() - timedelta(days=i)
@@ -101,6 +106,7 @@ def dashboard():
 @admin_bp.route('/therapists')
 @login_required
 def therapists():
+    """Therapists management page"""
     therapists = Therapist.query.order_by(Therapist.name).all()
     return render_template('admin/therapists.html', therapists=therapists)
 
@@ -345,6 +351,12 @@ def confirm_booking(booking_id):
 
 # ==================== GALLERY ROUTES ====================
 
+@admin_bp.route('/gallery')
+@login_required
+def gallery():
+    images = GalleryImage.query.order_by(GalleryImage.sort_order).all()
+    return render_template('admin/gallery.html', gallery_images=images)
+
 @admin_bp.route('/api/gallery', methods=['POST'])
 @login_required
 def upload_gallery():
@@ -385,6 +397,111 @@ def delete_gallery_image(image_id):
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
 
+# ==================== BLOG CRUD ====================
+
+@admin_bp.route('/blog')
+@login_required
+def blog():
+    posts = BlogPost.query.order_by(desc(BlogPost.created_at)).all()
+    return render_template('admin/blog.html', posts=posts)
+
+@admin_bp.route('/api/blog', methods=['POST'])
+@login_required
+def create_blog_post():
+    try:
+        title = request.form.get('title')
+        slug = request.form.get('slug')
+        content = request.form.get('content')
+        excerpt = request.form.get('excerpt')
+        is_published = request.form.get('is_published') == 'on'
+        meta_description = request.form.get('meta_description')
+        meta_keywords = request.form.get('meta_keywords')
+        
+        if not title or not content:
+            return jsonify({'success': False, 'error': 'Title and content are required'}), 400
+        
+        if not slug:
+            slug = title.lower().replace(' ', '-').replace('.', '').replace(',', '')
+            slug = slug.replace("'", '').replace('"', '')
+        
+        post = BlogPost(
+            title=title,
+            slug=slug,
+            content=content,
+            excerpt=excerpt,
+            is_published=is_published,
+            meta_description=meta_description,
+            meta_keywords=meta_keywords
+        )
+        
+        if 'image' in request.files:
+            file = request.files['image']
+            if file and file.filename:
+                result = UploadService.upload_image(file, 'blog', resize=(1200, 630))
+                if result['success']:
+                    post.image_url = result['url']
+        
+        db.session.add(post)
+        db.session.commit()
+        return jsonify({'success': True, 'post': post.to_dict()})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@admin_bp.route('/api/blog/<post_id>', methods=['GET', 'PUT', 'DELETE'])
+@login_required
+def blog_operations(post_id):
+    post = BlogPost.query.get_or_404(post_id)
+    
+    if request.method == 'GET':
+        return jsonify(post.to_dict())
+    
+    elif request.method == 'PUT':
+        try:
+            title = request.form.get('title')
+            slug = request.form.get('slug')
+            content = request.form.get('content')
+            excerpt = request.form.get('excerpt')
+            is_published = request.form.get('is_published') == 'on'
+            meta_description = request.form.get('meta_description')
+            meta_keywords = request.form.get('meta_keywords')
+            
+            if title:
+                post.title = title
+            if slug:
+                post.slug = slug
+            if content:
+                post.content = content
+            if excerpt is not None:
+                post.excerpt = excerpt
+            post.is_published = is_published
+            if meta_description is not None:
+                post.meta_description = meta_description
+            if meta_keywords is not None:
+                post.meta_keywords = meta_keywords
+            
+            if 'image' in request.files:
+                file = request.files['image']
+                if file and file.filename:
+                    result = UploadService.upload_image(file, 'blog', resize=(1200, 630))
+                    if result['success']:
+                        post.image_url = result['url']
+            
+            db.session.commit()
+            return jsonify({'success': True, 'post': post.to_dict()})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+    
+    elif request.method == 'DELETE':
+        try:
+            db.session.delete(post)
+            db.session.commit()
+            return jsonify({'success': True})
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+
 # ==================== SETTINGS ROUTES ====================
 
 @admin_bp.route('/settings')
@@ -410,7 +527,17 @@ def update_settings():
             'sunday_hours': request.form.get('sunday_hours'),
             'business_tagline': request.form.get('business_tagline'),
             'business_description': request.form.get('business_description'),
+            'facebook_url': request.form.get('facebook_url'),
+            'instagram_url': request.form.get('instagram_url'),
+            'twitter_url': request.form.get('twitter_url'),
+            'youtube_url': request.form.get('youtube_url'),
+            'meta_title': request.form.get('meta_title'),
+            'meta_description': request.form.get('meta_description'),
+            'meta_keywords': request.form.get('meta_keywords'),
         }
+        
+        # Remove None values
+        data = {k: v for k, v in data.items() if v is not None}
         
         SiteSetting.update_settings(data)
         db.session.commit()
@@ -450,8 +577,6 @@ def remove_hero_video():
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
 
-# ==================== LOGO ROUTES ====================
-
 @admin_bp.route('/api/settings/logo', methods=['POST'])
 @login_required
 def upload_logo():
@@ -477,6 +602,37 @@ def upload_logo():
 def remove_logo():
     try:
         SiteSetting.set_setting('logo_url', None)
+        db.session.commit()
+        return jsonify({'success': True})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@admin_bp.route('/api/settings/background-image', methods=['POST'])
+@login_required
+def upload_background_image():
+    try:
+        if 'background_image' not in request.files:
+            return jsonify({'success': False, 'error': 'No image provided'}), 400
+        
+        file = request.files['background_image']
+        result = UploadService.upload_image(file, 'background', resize=(1920, 1080))
+        
+        if not result['success']:
+            return jsonify({'success': False, 'error': result.get('error')}), 400
+        
+        SiteSetting.set_setting('background_image_url', result['url'])
+        db.session.commit()
+        return jsonify({'success': True, 'url': result['url']})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@admin_bp.route('/api/settings/background-image', methods=['DELETE'])
+@login_required
+def remove_background_image():
+    try:
+        SiteSetting.set_setting('background_image_url', None)
         db.session.commit()
         return jsonify({'success': True})
     except Exception as e:
