@@ -50,7 +50,7 @@ def create_booking():
             'client_phone',
             'appointment_date',
             'appointment_time',
-            'service_id'
+            
         ]
 
         missing = []
