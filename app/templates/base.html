@@ -69,7 +69,9 @@
     
     <!-- Main Content -->
     <main>
-        {% block content %}{% endblock %}
+        {% block content %}
+            {% block booking %}{% endblock %}
+        {% endblock %}
     </main>
     
     <!-- Footer -->
