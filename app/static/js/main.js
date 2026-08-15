@@ -19,6 +19,8 @@ function openBookingModal(serviceId = null) {
     console.log('📌 serviceId parameter:', serviceId);
     console.log('📌 serviceId type:', typeof serviceId);
     console.log('📌 serviceId length:', serviceId?.length || 0);
+    console.log('📌 serviceId is null/undefined:', serviceId === null || serviceId === undefined);
+    console.log('📌 serviceId is empty string:', serviceId === '');
     
     const modal = document.getElementById('bookingModal');
     const serviceIdInput = document.getElementById('serviceId');
@@ -43,19 +45,46 @@ function openBookingModal(serviceId = null) {
     if (errorDiv) errorDiv.classList.add('hidden');
     if (successDiv) successDiv.classList.add('hidden');
     
+    // ============================================================
+    // FIX: Try to get service ID from multiple sources
+    // ============================================================
+    let finalServiceId = serviceId;
+    
+    // If serviceId is null, undefined, or empty string, try to get it from the dropdown
+    if (!finalServiceId || finalServiceId === '') {
+        console.log('⚠️ No serviceId provided, checking dropdown...');
+        if (displaySelect && displaySelect.value) {
+            finalServiceId = displaySelect.value;
+            console.log('✅ Found serviceId in dropdown:', finalServiceId);
+        } else {
+            console.warn('⚠️ No serviceId found in dropdown either');
+        }
+    }
+    
+    // If still no serviceId, try to get it from the URL or data attribute
+    if (!finalServiceId || finalServiceId === '') {
+        console.log('⚠️ Checking for service ID in URL parameters...');
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlServiceId = urlParams.get('service');
+        if (urlServiceId) {
+            finalServiceId = urlServiceId;
+            console.log('✅ Found serviceId in URL:', finalServiceId);
+        }
+    }
+    
     // Set the service ID if provided
-    if (serviceId) {
-        serviceIdInput.value = serviceId;
+    if (finalServiceId && finalServiceId !== '') {
+        serviceIdInput.value = finalServiceId;
         console.log('✅ Set serviceIdInput.value to:', serviceIdInput.value);
         
         // Sync the display dropdown
         if (displaySelect) {
-            displaySelect.value = serviceId;
+            displaySelect.value = finalServiceId;
             console.log('✅ Set displaySelect.value to:', displaySelect.value);
         }
     } else {
         serviceIdInput.value = '';
-        console.log('⚠️ No serviceId provided, cleared value');
+        console.warn('⚠️ No serviceId found anywhere, cleared value');
         if (displaySelect) {
             displaySelect.value = '';
         }
@@ -87,6 +116,13 @@ function openBookingModal(serviceId = null) {
     document.body.style.overflow = 'hidden';
     console.log('✅ Modal opened successfully');
     console.log('🏁 ===== openBookingModal COMPLETE =====');
+    
+    // If service ID is still empty, show a warning
+    if (!serviceIdInput.value) {
+        console.warn('⚠️⚠️⚠️ WARNING: service_id is still empty!');
+        console.warn('Please check that your "Book Now" buttons have: onclick="openBookingModal(\'{{ service.id }}\')"');
+        console.warn('And that {{ service.id }} is actually being rendered.');
+    }
 }
 
 /**
@@ -235,13 +271,15 @@ async function handleBookingSubmit(event) {
     }
     console.log('✅ client_phone: PASSED');
     
-    // Service ID
+    // Service ID - Check with more detail
     const serviceId = rawData.service_id;
     if (!serviceId || String(serviceId).trim() === '') {
         console.error('❌❌❌ service_id is EMPTY or MISSING');
         console.error('  Value:', serviceId);
         console.error('  Type:', typeof serviceId);
         console.error('  This is likely why the backend is rejecting the request!');
+        console.error('  💡 TIP: Make sure your "Book Now" buttons have: onclick="openBookingModal(\'{{ service.id }}\')"');
+        console.error('  💡 TIP: Check that {{ service.id }} is being rendered properly in your template');
         showError('No service selected. Please go back and select a service.');
         return;
     }
@@ -532,6 +570,11 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('📋 Service cards with openBookingModal:', serviceCards.length);
     if (serviceCards.length > 0) {
         console.log('✅ Found service cards with booking functionality');
+        // Log the onclick attributes to see what's being passed
+        serviceCards.forEach((card, index) => {
+            const onclick = card.getAttribute('onclick');
+            console.log(`  Card ${index + 1}: onclick="${onclick}"`);
+        });
     } else {
         console.warn('⚠️ No service cards with openBookingModal found');
     }
