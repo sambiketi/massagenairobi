@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 from datetime import datetime
+import uuid  # ← ADDED: For UUID validation
 
 from app import db
 from app.models import Booking, Service
@@ -121,11 +122,23 @@ def create_booking():
             }), 400
 
         # ----------------------------------------------------
+        # VALIDATE SERVICE ID IS VALID UUID
+        # ----------------------------------------------------
+
+        try:
+            service_uuid = uuid.UUID(service_id)
+        except ValueError:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid service ID format'
+            }), 400
+
+        # ----------------------------------------------------
         # FIND SERVICE
         # ----------------------------------------------------
 
         service = Service.query.filter_by(
-            id=service_id,
+            id=service_uuid,  # ← CHANGED: Use UUID object
             is_active=True
         ).first()
 
@@ -231,7 +244,7 @@ def create_booking():
 
             client_phone=client_phone,
 
-            service_id=service.id,
+            service_id=service.id,  # ← Now UUID object
 
             appointment_date=appointment_date,
 
@@ -320,7 +333,7 @@ def create_booking():
                 'Booking created successfully',
 
             'booking_id':
-                str(booking.id),
+                str(booking.id),  # ← Convert UUID to string
 
             'booking':
                 booking.to_dict(),
@@ -411,8 +424,20 @@ def get_booking(booking_id):
 
     try:
 
+        # ----------------------------------------------------
+        # VALIDATE BOOKING ID IS VALID UUID
+        # ----------------------------------------------------
+
+        try:
+            booking_uuid = uuid.UUID(booking_id)
+        except ValueError:
+            return jsonify({
+                'success': False,
+                'error': 'Invalid booking ID format'
+            }), 400
+
         booking = Booking.query.get(
-            booking_id
+            booking_uuid  # ← CHANGED: Use UUID object
         )
 
         if not booking:
