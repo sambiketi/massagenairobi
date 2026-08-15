@@ -84,7 +84,7 @@ function openBookingModal(serviceId = null) {
         }
     } else {
         serviceIdInput.value = '';
-        console.warn('⚠️ No serviceId found anywhere, cleared value');
+        console.log('ℹ️ No service ID - user can select from dropdown');
         if (displaySelect) {
             displaySelect.value = '';
         }
@@ -116,13 +116,6 @@ function openBookingModal(serviceId = null) {
     document.body.style.overflow = 'hidden';
     console.log('✅ Modal opened successfully');
     console.log('🏁 ===== openBookingModal COMPLETE =====');
-    
-    // If service ID is still empty, show a warning
-    if (!serviceIdInput.value) {
-        console.warn('⚠️⚠️⚠️ WARNING: service_id is still empty!');
-        console.warn('Please check that your "Book Now" buttons have: onclick="openBookingModal(\'{{ service.id }}\')"');
-        console.warn('And that {{ service.id }} is actually being rendered.');
-    }
 }
 
 /**
@@ -210,10 +203,10 @@ async function handleBookingSubmit(event) {
     // ============================================================
     // STEP 3: CHECK FOR EMPTY/NULL/UNDEFINED VALUES
     // ============================================================
+    // NOTE: service_id is NOT in required fields - it's optional
     const requiredFields = [
         'client_name',
         'client_phone',
-        'service_id',
         'appointment_date',
         'appointment_time'
     ];
@@ -271,19 +264,30 @@ async function handleBookingSubmit(event) {
     }
     console.log('✅ client_phone: PASSED');
     
-    // Service ID - Check with more detail
-    const serviceId = rawData.service_id;
+    // ============================================================
+    // SERVICE ID - OPTIONAL - Check dropdown as fallback
+    // ============================================================
+    let serviceId = rawData.service_id;
     if (!serviceId || String(serviceId).trim() === '') {
-        console.error('❌❌❌ service_id is EMPTY or MISSING');
-        console.error('  Value:', serviceId);
-        console.error('  Type:', typeof serviceId);
-        console.error('  This is likely why the backend is rejecting the request!');
-        console.error('  💡 TIP: Make sure your "Book Now" buttons have: onclick="openBookingModal(\'{{ service.id }}\')"');
-        console.error('  💡 TIP: Check that {{ service.id }} is being rendered properly in your template');
-        showError('No service selected. Please go back and select a service.');
-        return;
+        console.warn('⚠️ No service_id provided - checking dropdown...');
+        
+        // Try to get service ID from the dropdown
+        const displaySelect = document.getElementById('bookingServiceDisplay');
+        if (displaySelect && displaySelect.value) {
+            serviceId = displaySelect.value;
+            console.log('✅ Found service_id in dropdown:', serviceId);
+            // Update the hidden field
+            document.getElementById('serviceId').value = serviceId;
+            rawData.service_id = serviceId;
+        } else {
+            // No service selected at all - show error
+            console.error('❌❌❌ No service selected from dropdown either!');
+            showError('Please select a service from the dropdown.');
+            return;
+        }
+    } else {
+        console.log('✅ service_id: PASSED');
     }
-    console.log('✅ service_id: PASSED');
     
     // Appointment Date
     const appointmentDate = rawData.appointment_date;
