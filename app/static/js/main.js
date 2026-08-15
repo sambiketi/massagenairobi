@@ -6,7 +6,7 @@ async function handleBookingSubmit(event) {
     const bookingData = {
         client_name: document.getElementById('clientName').value.trim(),
         client_phone: document.getElementById('clientPhone').value.trim(),
-        service_id: document.getElementById('bookingService').value,
+        service_id: document.getElementById('serviceId').value,  // ← FIXED: Use hidden input
         appointment_date: document.getElementById('appointmentDate').value,
         appointment_time: document.getElementById('appointmentTime').value,
         notes: document.getElementById('notes').value.trim()
@@ -22,7 +22,7 @@ async function handleBookingSubmit(event) {
         return;
     }
     if (!bookingData.service_id) {
-        showError('Please select a service.');
+        showError('No service selected. Please go back and select a service.');
         return;
     }
     if (!bookingData.appointment_date) {
@@ -34,7 +34,7 @@ async function handleBookingSubmit(event) {
         return;
     }
     
-    console.log('Sending booking data:', bookingData);
+    console.log('📤 Sending booking data:', bookingData);
     
     // Show loading state
     const submitBtn = document.getElementById('bookingSubmit');
@@ -56,7 +56,7 @@ async function handleBookingSubmit(event) {
         });
         
         const result = await response.json();
-        console.log('API response:', result);
+        console.log('📥 API response:', result);
         
         if (result.success) {
             const successDiv = document.getElementById('bookingSuccess');
@@ -86,7 +86,7 @@ async function handleBookingSubmit(event) {
             showError(result.error || 'Booking failed. Please try again.');
         }
     } catch (error) {
-        console.error('Booking error:', error);
+        console.error('❌ Booking error:', error);
         showError('Network error. Please check your connection and try again.');
     } finally {
         submitBtn.innerHTML = originalText;
