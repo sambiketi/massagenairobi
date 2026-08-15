@@ -1,6 +1,10 @@
 // ============================================================
-// MAIN.JS - Complete Website Functionality
+// MAIN.JS - Complete Website Functionality WITH DEBUG
 // ============================================================
+
+console.log('🚀 ===== MAIN.JS LOADED =====');
+console.log('📍 Page URL:', window.location.href);
+console.log('📍 Timestamp:', new Date().toISOString());
 
 // ============================================================
 // BOOKING MODAL FUNCTIONS
@@ -11,37 +15,56 @@
  * @param {string|null} serviceId - Optional service ID to pre-select
  */
 function openBookingModal(serviceId = null) {
+    console.log('🔍 ===== openBookingModal CALLED =====');
+    console.log('📌 serviceId parameter:', serviceId);
+    console.log('📌 serviceId type:', typeof serviceId);
+    console.log('📌 serviceId length:', serviceId?.length || 0);
+    
     const modal = document.getElementById('bookingModal');
-    if (!modal) {
-        console.error('Booking modal not found');
+    const serviceIdInput = document.getElementById('serviceId');
+    const displaySelect = document.getElementById('bookingServiceDisplay');
+    
+    // DEBUG: Check if elements exist
+    console.log('📋 DOM Elements:');
+    console.log('  modal:', modal ? '✅ Found' : '❌ NOT FOUND');
+    console.log('  serviceIdInput:', serviceIdInput ? '✅ Found' : '❌ NOT FOUND');
+    console.log('  displaySelect:', displaySelect ? '✅ Found' : '❌ NOT FOUND');
+    
+    if (!modal || !serviceIdInput) {
+        console.error('❌ Required elements not found!');
+        console.error('  modal exists:', !!modal);
+        console.error('  serviceIdInput exists:', !!serviceIdInput);
         return;
     }
     
-    const serviceIdInput = document.getElementById('serviceId');
-    const displaySelect = document.getElementById('bookingServiceDisplay');
+    // Clear previous messages
     const errorDiv = document.getElementById('bookingError');
     const successDiv = document.getElementById('bookingSuccess');
-    
-    // Clear previous messages
     if (errorDiv) errorDiv.classList.add('hidden');
     if (successDiv) successDiv.classList.add('hidden');
     
     // Set the service ID if provided
-    if (serviceId && serviceIdInput) {
+    if (serviceId) {
         serviceIdInput.value = serviceId;
+        console.log('✅ Set serviceIdInput.value to:', serviceIdInput.value);
         
         // Sync the display dropdown
         if (displaySelect) {
             displaySelect.value = serviceId;
+            console.log('✅ Set displaySelect.value to:', displaySelect.value);
         }
-        
-        console.log('📌 Service pre-selected:', serviceId);
-    } else if (serviceIdInput) {
+    } else {
         serviceIdInput.value = '';
+        console.log('⚠️ No serviceId provided, cleared value');
         if (displaySelect) {
             displaySelect.value = '';
         }
     }
+    
+    // Verify the value was set
+    console.log('🔍 After setting, serviceIdInput.value =', serviceIdInput.value);
+    console.log('🔍 After setting, serviceIdInput.value type:', typeof serviceIdInput.value);
+    console.log('🔍 After setting, serviceIdInput.value length:', serviceIdInput.value.length);
     
     // Set default date to tomorrow
     const tomorrow = new Date();
@@ -49,122 +72,248 @@ function openBookingModal(serviceId = null) {
     const dateInput = document.getElementById('appointmentDate');
     if (dateInput && !dateInput.value) {
         dateInput.value = tomorrow.toISOString().split('T')[0];
+        console.log('📅 Set default date to:', dateInput.value);
     }
     
     // Set default time
     const timeInput = document.getElementById('appointmentTime');
     if (timeInput && !timeInput.value) {
         timeInput.value = '14:00';
+        console.log('🕐 Set default time to:', timeInput.value);
     }
     
     // Show the modal
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    console.log('✅ Modal opened successfully');
+    console.log('🏁 ===== openBookingModal COMPLETE =====');
 }
 
 /**
  * Close the booking modal
  */
 function closeBookingModal() {
+    console.log('🔍 closeBookingModal called');
+    
     const modal = document.getElementById('bookingModal');
     if (modal) {
         modal.classList.add('hidden');
+        console.log('✅ Modal closed');
+    } else {
+        console.warn('⚠️ Modal not found');
     }
+    
     document.body.style.overflow = '';
     
     // Reset form
     const form = document.getElementById('bookingForm');
     if (form) {
         form.reset();
+        console.log('✅ Form reset');
     }
 }
 
 /**
- * Handle booking form submission
- * @param {Event} event - Form submit event
+ * Handle booking form submission with FULL DEBUG
  */
 async function handleBookingSubmit(event) {
     event.preventDefault();
     
-    // Get form data
-    const bookingData = {
-        client_name: document.getElementById('clientName')?.value.trim() || '',
-        client_phone: document.getElementById('clientPhone')?.value.trim() || '',
-        service_id: document.getElementById('serviceId')?.value || '',
-        appointment_date: document.getElementById('appointmentDate')?.value || '',
-        appointment_time: document.getElementById('appointmentTime')?.value || '',
-        notes: document.getElementById('notes')?.value.trim() || ''
+    console.log('🚀 ===== START BOOKING SUBMISSION =====');
+    console.log('📅 Submission time:', new Date().toISOString());
+    
+    // ============================================================
+    // STEP 1: CHECK ALL FORM ELEMENTS EXIST
+    // ============================================================
+    const elements = {
+        clientName: document.getElementById('clientName'),
+        clientPhone: document.getElementById('clientPhone'),
+        serviceId: document.getElementById('serviceId'),
+        appointmentDate: document.getElementById('appointmentDate'),
+        appointmentTime: document.getElementById('appointmentTime'),
+        notes: document.getElementById('notes'),
+        form: document.getElementById('bookingForm'),
+        submitBtn: document.getElementById('bookingSubmit'),
+        errorDiv: document.getElementById('bookingError'),
+        successDiv: document.getElementById('bookingSuccess')
     };
     
-    // Validate required fields
-    if (!bookingData.client_name) {
+    console.log('📋 Form elements found:');
+    Object.keys(elements).forEach(key => {
+        const exists = !!elements[key];
+        console.log(`  ${key}: ${exists ? '✅ Found' : '❌ NOT FOUND'}`);
+        if (exists && key !== 'form' && key !== 'submitBtn' && key !== 'errorDiv' && key !== 'successDiv') {
+            console.log(`    value: "${elements[key].value}"`);
+            console.log(`    type: ${typeof elements[key].value}`);
+            console.log(`    length: ${elements[key].value?.length || 0}`);
+        }
+    });
+    
+    // ============================================================
+    // STEP 2: GET RAW VALUES
+    // ============================================================
+    const rawData = {
+        client_name: elements.clientName?.value,
+        client_phone: elements.clientPhone?.value,
+        service_id: elements.serviceId?.value,
+        appointment_date: elements.appointmentDate?.value,
+        appointment_time: elements.appointmentTime?.value,
+        notes: elements.notes?.value
+    };
+    
+    console.log('📝 RAW form values:');
+    Object.keys(rawData).forEach(key => {
+        const value = rawData[key];
+        const displayValue = value === undefined ? 'undefined' : value === null ? 'null' : `"${value}"`;
+        console.log(`  ${key}: ${displayValue}`);
+        console.log(`    type: ${typeof value}`);
+        console.log(`    length: ${value?.length || 0}`);
+        console.log(`    is empty: ${!value || String(value).trim() === ''}`);
+    });
+    
+    // ============================================================
+    // STEP 3: CHECK FOR EMPTY/NULL/UNDEFINED VALUES
+    // ============================================================
+    const requiredFields = [
+        'client_name',
+        'client_phone',
+        'service_id',
+        'appointment_date',
+        'appointment_time'
+    ];
+    
+    const missingFields = [];
+    const emptyFields = [];
+    const fieldValues = {};
+    
+    requiredFields.forEach(field => {
+        const value = rawData[field];
+        fieldValues[field] = value;
+        
+        if (value === null || value === undefined) {
+            missingFields.push(field);
+            console.log(`❌ ${field}: MISSING (null/undefined)`);
+        } else if (String(value).trim() === '') {
+            emptyFields.push(field);
+            console.log(`❌ ${field}: EMPTY (empty string)`);
+        } else {
+            console.log(`✅ ${field}: VALID = "${String(value).trim()}"`);
+        }
+    });
+    
+    console.log('🔍 Validation summary:');
+    console.log(`  Missing (null/undefined): ${missingFields.length > 0 ? missingFields.join(', ') : 'None ✅'}`);
+    console.log(`  Empty (empty string): ${emptyFields.length > 0 ? emptyFields.join(', ') : 'None ✅'}`);
+    console.log(`  All fields valid: ${missingFields.length === 0 && emptyFields.length === 0}`);
+    
+    // ============================================================
+    // STEP 4: CHECK EACH FIELD INDIVIDUALLY
+    // ============================================================
+    console.log('🔎 Individual field validation:');
+    
+    // Client Name
+    const clientName = rawData.client_name;
+    if (!clientName || String(clientName).trim() === '') {
+        console.error('❌❌❌ client_name is EMPTY or MISSING');
+        console.error('  Value:', clientName);
+        console.error('  Type:', typeof clientName);
         showError('Please enter your full name.');
-        document.getElementById('clientName')?.focus();
+        elements.clientName?.focus();
         return;
     }
+    console.log('✅ client_name: PASSED');
     
-    if (bookingData.client_name.length < 2) {
-        showError('Please enter a valid name (minimum 2 characters).');
-        document.getElementById('clientName')?.focus();
-        return;
-    }
-    
-    if (!bookingData.client_phone) {
+    // Client Phone
+    const clientPhone = rawData.client_phone;
+    if (!clientPhone || String(clientPhone).trim() === '') {
+        console.error('❌❌❌ client_phone is EMPTY or MISSING');
+        console.error('  Value:', clientPhone);
+        console.error('  Type:', typeof clientPhone);
         showError('Please enter your phone number.');
-        document.getElementById('clientPhone')?.focus();
+        elements.clientPhone?.focus();
         return;
     }
+    console.log('✅ client_phone: PASSED');
     
-    if (bookingData.client_phone.length < 7) {
-        showError('Please enter a valid phone number (minimum 7 digits).');
-        document.getElementById('clientPhone')?.focus();
-        return;
-    }
-    
-    if (!bookingData.service_id) {
+    // Service ID
+    const serviceId = rawData.service_id;
+    if (!serviceId || String(serviceId).trim() === '') {
+        console.error('❌❌❌ service_id is EMPTY or MISSING');
+        console.error('  Value:', serviceId);
+        console.error('  Type:', typeof serviceId);
+        console.error('  This is likely why the backend is rejecting the request!');
         showError('No service selected. Please go back and select a service.');
         return;
     }
+    console.log('✅ service_id: PASSED');
     
-    if (!bookingData.appointment_date) {
+    // Appointment Date
+    const appointmentDate = rawData.appointment_date;
+    if (!appointmentDate || String(appointmentDate).trim() === '') {
+        console.error('❌❌❌ appointment_date is EMPTY or MISSING');
+        console.error('  Value:', appointmentDate);
+        console.error('  Type:', typeof appointmentDate);
         showError('Please select a date.');
-        document.getElementById('appointmentDate')?.focus();
+        elements.appointmentDate?.focus();
         return;
     }
+    console.log('✅ appointment_date: PASSED');
     
-    if (!bookingData.appointment_time) {
+    // Appointment Time
+    const appointmentTime = rawData.appointment_time;
+    if (!appointmentTime || String(appointmentTime).trim() === '') {
+        console.error('❌❌❌ appointment_time is EMPTY or MISSING');
+        console.error('  Value:', appointmentTime);
+        console.error('  Type:', typeof appointmentTime);
         showError('Please select a time.');
-        document.getElementById('appointmentTime')?.focus();
+        elements.appointmentTime?.focus();
         return;
     }
+    console.log('✅ appointment_time: PASSED');
     
-    // Validate date is not in the past
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const selectedDate = new Date(bookingData.appointment_date);
-    if (selectedDate < today) {
-        showError('Please select a date in the future.');
-        document.getElementById('appointmentDate')?.focus();
-        return;
-    }
+    console.log('✅ ALL REQUIRED FIELDS VALIDATED SUCCESSFULLY!');
     
-    console.log('📤 Sending booking data:', bookingData);
+    // ============================================================
+    // STEP 5: PREPARE FINAL DATA
+    // ============================================================
+    const bookingData = {
+        client_name: String(clientName).trim(),
+        client_phone: String(clientPhone).trim(),
+        service_id: String(serviceId).trim(),
+        appointment_date: String(appointmentDate).trim(),
+        appointment_time: String(appointmentTime).trim(),
+        notes: rawData.notes ? String(rawData.notes).trim() : ''
+    };
+    
+    console.log('📦 FINAL DATA being sent to server:');
+    console.log(JSON.stringify(bookingData, null, 2));
+    console.log('📦 Data type check:');
+    Object.keys(bookingData).forEach(key => {
+        const value = bookingData[key];
+        console.log(`  ${key}: type=${typeof value}, value="${value}", length=${value.length}`);
+    });
+    
+    // ============================================================
+    // STEP 6: SEND TO SERVER
+    // ============================================================
+    console.log('📤 Sending POST request to /api/book...');
+    console.log('📤 Request payload:', JSON.stringify(bookingData));
     
     // Show loading state
-    const submitBtn = document.getElementById('bookingSubmit');
+    const submitBtn = elements.submitBtn;
     const originalText = submitBtn?.innerHTML || 'Confirm Booking';
     if (submitBtn) {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
         submitBtn.disabled = true;
+        console.log('⏳ Loading state activated');
     }
     
     // Hide previous messages
-    const errorDiv = document.getElementById('bookingError');
-    const successDiv = document.getElementById('bookingSuccess');
-    if (errorDiv) errorDiv.classList.add('hidden');
-    if (successDiv) successDiv.classList.add('hidden');
+    if (elements.errorDiv) elements.errorDiv.classList.add('hidden');
+    if (elements.successDiv) elements.successDiv.classList.add('hidden');
     
     try {
+        console.log('⏳ Awaiting server response...');
         const response = await fetch('/api/book', {
             method: 'POST',
             headers: {
@@ -174,51 +323,112 @@ async function handleBookingSubmit(event) {
             body: JSON.stringify(bookingData)
         });
         
-        const result = await response.json();
-        console.log('📥 API response:', result);
+        console.log('📥 Response received!');
+        console.log('📥 Response status:', response.status, response.statusText);
+        console.log('📥 Response headers:', Object.fromEntries(response.headers.entries()));
+        
+        // Get response as text first for debugging
+        const responseText = await response.text();
+        console.log('📥 Raw response body:', responseText);
+        console.log('📥 Response body length:', responseText.length);
+        
+        if (!responseText || responseText.trim() === '') {
+            console.error('❌ Empty response received!');
+            showError('Server returned empty response. Please try again.');
+            return;
+        }
+        
+        let result;
+        try {
+            result = JSON.parse(responseText);
+            console.log('📥 Parsed JSON response:', result);
+        } catch (parseError) {
+            console.error('❌ JSON Parse Error:', parseError);
+            console.error('❌ Response that failed to parse:', responseText.substring(0, 200) + '...');
+            showError('Server returned invalid response format. Please try again.');
+            return;
+        }
+        
+        // ============================================================
+        // STEP 7: PROCESS RESPONSE
+        // ============================================================
+        console.log('🔍 Response analysis:');
+        console.log('  success:', result.success);
+        console.log('  message:', result.message);
+        console.log('  error:', result.error);
+        console.log('  missing fields:', result.missing || 'None');
+        console.log('  booking_id:', result.booking_id || 'None');
+        console.log('  Full result:', result);
         
         if (result.success) {
-            // Show success message
-            if (successDiv) {
-                successDiv.textContent = '✅ ' + (result.message || 'Booking confirmed! We will contact you shortly.');
-                successDiv.classList.remove('hidden');
+            console.log('🎉 ✅ BOOKING SUCCESSFUL!');
+            console.log('  Booking ID:', result.booking_id);
+            console.log('  Message:', result.message);
+            
+            if (elements.successDiv) {
+                elements.successDiv.textContent = '✅ ' + (result.message || 'Booking confirmed! We will contact you shortly.');
+                elements.successDiv.classList.remove('hidden');
+                console.log('✅ Success message displayed');
             }
             
-            // Open WhatsApp if URL provided
             if (result.whatsapp_url) {
+                console.log('📱 WhatsApp URL generated:', result.whatsapp_url);
                 setTimeout(() => {
+                    console.log('📱 Opening WhatsApp...');
                     window.open(result.whatsapp_url, '_blank');
                 }, 500);
             }
             
-            // Close modal after delay
+            console.log('⏳ Closing modal in 3 seconds...');
             setTimeout(() => {
                 closeBookingModal();
-                // Reset form
                 const form = document.getElementById('bookingForm');
                 if (form) {
                     form.reset();
+                    console.log('✅ Form reset after successful booking');
                 }
             }, 3000);
         } else {
-            // Show error from server
-            const errorMsg = result.error || 'Booking failed. Please try again.';
-            if (result.missing) {
-                showError(`Missing fields: ${result.missing.join(', ')}`);
-            } else {
-                showError(errorMsg);
+            console.error('❌ ❌ ❌ BOOKING FAILED!');
+            console.error('  Error message:', result.error);
+            console.error('  Missing fields:', result.missing || 'None specified');
+            console.error('  Debug info:', result.debug || 'None');
+            
+            let errorMessage = result.error || 'Booking failed. Please try again.';
+            if (result.missing && result.missing.length > 0) {
+                errorMessage = `Missing required fields: ${result.missing.join(', ')}`;
+                console.error('❌ Missing fields from server:', result.missing);
             }
+            
+            if (result.debug) {
+                console.error('❌ Server debug info:', result.debug);
+            }
+            
+            showError(errorMessage);
         }
     } catch (error) {
-        console.error('❌ Booking error:', error);
-        showError('Network error. Please check your connection and try again.');
+        console.error('❌ 💥 NETWORK/REQUEST ERROR:', error);
+        console.error('❌ Error name:', error.name);
+        console.error('❌ Error message:', error.message);
+        console.error('❌ Error stack:', error.stack);
+        
+        let errorMessage = 'Network error. ';
+        if (error.message) {
+            errorMessage += error.message;
+        } else {
+            errorMessage += 'Please check your connection and try again.';
+        }
+        showError(errorMessage);
     } finally {
-        // Restore button
         if (submitBtn) {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
+            console.log('✅ Submit button restored');
         }
     }
+    
+    console.log('🏁 ===== END BOOKING SUBMISSION =====');
+    console.log('📅 End time:', new Date().toISOString());
 }
 
 /**
@@ -226,10 +436,16 @@ async function handleBookingSubmit(event) {
  * @param {string} message - Error message to display
  */
 function showError(message) {
+    console.log('⚠️ showError called with message:', message);
+    
     const errorDiv = document.getElementById('bookingError');
     if (errorDiv) {
         errorDiv.textContent = message;
         errorDiv.classList.remove('hidden');
+        console.log('✅ Error message displayed:', message);
+    } else {
+        console.error('❌ Error div not found!');
+        alert(message);
     }
     
     const successDiv = document.getElementById('bookingSuccess');
@@ -241,6 +457,7 @@ function showError(message) {
     setTimeout(() => {
         if (errorDiv) {
             errorDiv.classList.add('hidden');
+            console.log('⚠️ Error message auto-hidden after 5 seconds');
         }
     }, 5000);
 }
@@ -250,14 +467,23 @@ function showError(message) {
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 DOM Content Loaded');
+    console.log('📍 Current path:', window.location.pathname);
+    
     // Mobile menu toggle
     const menuBtn = document.getElementById('mobileMenuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     
     if (menuBtn && mobileMenu) {
+        console.log('✅ Mobile menu elements found');
         menuBtn.addEventListener('click', function() {
             mobileMenu.classList.toggle('hidden');
+            console.log('📱 Mobile menu toggled, hidden:', mobileMenu.classList.contains('hidden'));
         });
+    } else {
+        console.warn('⚠️ Mobile menu elements not found');
+        if (!menuBtn) console.warn('  mobileMenuBtn not found');
+        if (!mobileMenu) console.warn('  mobileMenu not found');
     }
     
     // Close mobile menu on link click
@@ -273,6 +499,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-close booking modal on ESC key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
+            console.log('⌨️ ESC key pressed, closing modal');
             closeBookingModal();
         }
     });
@@ -280,9 +507,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Click outside modal to close
     const modalOverlay = document.querySelector('.modal-overlay');
     if (modalOverlay) {
+        console.log('✅ Modal overlay found');
         modalOverlay.addEventListener('click', function() {
+            console.log('🖱️ Clicked outside modal, closing');
             closeBookingModal();
         });
+    } else {
+        console.warn('⚠️ Modal overlay not found');
     }
     
     // Set min date for appointment date picker
@@ -291,9 +522,29 @@ document.addEventListener('DOMContentLoaded', function() {
         const tomorrow = new Date();
         tomorrow.setDate(tomorrow.getDate() + 1);
         dateInput.min = tomorrow.toISOString().split('T')[0];
+        console.log('📅 Set min date for date picker to:', dateInput.min);
+    } else {
+        console.warn('⚠️ appointmentDate input not found');
     }
     
-    console.log('✅ Main.js loaded successfully');
+    // Check if service cards exist
+    const serviceCards = document.querySelectorAll('[onclick*="openBookingModal"]');
+    console.log('📋 Service cards with openBookingModal:', serviceCards.length);
+    if (serviceCards.length > 0) {
+        console.log('✅ Found service cards with booking functionality');
+    } else {
+        console.warn('⚠️ No service cards with openBookingModal found');
+    }
+    
+    // Check if booking modal exists
+    const modal = document.getElementById('bookingModal');
+    if (modal) {
+        console.log('✅ Booking modal found in DOM');
+    } else {
+        console.warn('⚠️ Booking modal NOT found in DOM');
+    }
+    
+    console.log('✅ Main.js initialization complete');
 });
 
 // ============================================================
@@ -308,6 +559,7 @@ document.addEventListener('click', function(event) {
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
                 event.preventDefault();
+                console.log('📜 Smooth scrolling to:', targetId);
                 targetElement.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
@@ -323,6 +575,8 @@ document.addEventListener('click', function(event) {
 
 if ('IntersectionObserver' in window) {
     const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+    console.log('🖼️ Lazy loading images found:', lazyImages.length);
+    
     const imageObserver = new IntersectionObserver(function(entries, observer) {
         entries.forEach(function(entry) {
             if (entry.isIntersecting) {
@@ -330,6 +584,7 @@ if ('IntersectionObserver' in window) {
                 img.src = img.dataset.src || img.src;
                 img.classList.remove('opacity-0');
                 imageObserver.unobserve(img);
+                console.log('🖼️ Image loaded:', img.src);
             }
         });
     });
@@ -345,14 +600,17 @@ if ('IntersectionObserver' in window) {
 
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
+    console.log('✅ Contact form found');
     contactForm.addEventListener('submit', async function(event) {
         event.preventDefault();
+        console.log('📝 Contact form submitted');
         
         const formData = new FormData(this);
         const data = {};
         formData.forEach((value, key) => {
             data[key] = value.trim();
         });
+        console.log('📤 Contact form data:', data);
         
         const submitBtn = this.querySelector('button[type="submit"]');
         const originalText = submitBtn?.innerHTML || 'Send Message';
@@ -372,6 +630,7 @@ if (contactForm) {
             });
             
             const result = await response.json();
+            console.log('📥 Contact form response:', result);
             
             if (result.success) {
                 alert('✅ Message sent successfully! We will get back to you soon.');
@@ -380,7 +639,7 @@ if (contactForm) {
                 alert('❌ Error: ' + (result.error || 'Failed to send message.'));
             }
         } catch (error) {
-            console.error('Contact form error:', error);
+            console.error('❌ Contact form error:', error);
             alert('❌ Network error. Please try again.');
         } finally {
             if (submitBtn) {
@@ -389,6 +648,8 @@ if (contactForm) {
             }
         }
     });
+} else {
+    console.log('ℹ️ Contact form not found (optional)');
 }
 
 // ============================================================
@@ -426,7 +687,7 @@ function getTomorrowDate() {
 }
 
 // ============================================================
-// EXPOSE FUNCTIONS GLOBALLY (if needed)
+// EXPOSE FUNCTIONS GLOBALLY
 // ============================================================
 
 // Make functions available globally for inline onclick handlers
@@ -436,4 +697,14 @@ window.handleBookingSubmit = handleBookingSubmit;
 window.showError = showError;
 window.formatCurrency = formatCurrency;
 
-console.log('✅ All functions loaded and ready');
+console.log('✅ All functions exposed globally');
+console.log('📋 Available functions:');
+console.log('  - openBookingModal(serviceId)');
+console.log('  - closeBookingModal()');
+console.log('  - handleBookingSubmit(event)');
+console.log('  - showError(message)');
+console.log('  - formatCurrency(amount)');
+console.log('  - getTodayDate()');
+console.log('  - getTomorrowDate()');
+
+console.log('🚀 ===== MAIN.JS LOADED SUCCESSFULLY =====');
