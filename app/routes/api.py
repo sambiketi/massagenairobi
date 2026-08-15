@@ -5,6 +5,11 @@ import uuid  # ← ADDED: For UUID validation
 from app import db
 from app.models import Booking, Service
 from app.services.whatsapp_service import WhatsAppService
+from app.models.booking import Booking
+from app.models.service import Service
+from app.models.gallery import GalleryImage
+from app.models.admin import AdminUser
+
 
 
 api_bp = Blueprint('api', __name__)
