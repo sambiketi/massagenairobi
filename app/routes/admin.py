@@ -19,13 +19,11 @@ from flask_login import (
 from sqlalchemy import func, desc
 
 from app import db
-from app.models import (
-    Therapist,
-    Service,
-    Booking,
-    GalleryImage,
-    BlogPost,
-)
+from app.models.therapist import Therapist
+from app.models.service import Service
+from app.models.booking import Booking
+from app.models.gallery import GalleryImage
+from app.models.blog import BlogPost
 from app.models.settings import SiteSetting
 from app.models.admin import AdminUser
 

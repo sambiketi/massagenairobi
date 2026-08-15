@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, current_app, request, abort
-from app.models import Therapist, Service, GalleryImage, BlogPost
+from app.models.therapist import Therapist
+from app.models.service import Service
+from app.models.gallery import GalleryImage
+from app.models.blog import BlogPost
 from app.models.settings import SiteSetting
 
 main_bp = Blueprint('main', __name__)
